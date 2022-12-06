@@ -3,9 +3,7 @@ package eu.zickzenni.opencubes.world;
 import eu.zickzenni.opencubes.entity.CameraEntity;
 import eu.zickzenni.opencubes.entity.Entity;
 import eu.zickzenni.opencubes.util.SimpleProfiler;
-import eu.zickzenni.opencubes.world.generation.FlatworldGenerator;
 import eu.zickzenni.opencubes.world.generation.OverworldGenerator;
-import eu.zickzenni.opencubes.world.generation.WorldGenerator;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;

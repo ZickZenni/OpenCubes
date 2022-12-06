@@ -15,13 +15,13 @@ public class MeshBuilder {
 
     private int indicesOffset = 0;
 
-    public void addFace(Face face) {
-        addFace(face, 0, 0, 0);
+    public MeshBuilder addFace(Face face) {
+        return addFace(face, 0, 0, 0);
     }
 
-    public void addFace(Face face, float offsetX, float offsetY, float offsetZ) {
+    public MeshBuilder addFace(Face face, float offsetX, float offsetY, float offsetZ) {
         if (face == null) {
-            return;
+            return this;
         }
         for (Vector3f position : face.getPositions()) {
             vertices.add(position.add(offsetX, offsetY, offsetZ));
@@ -37,6 +37,7 @@ public class MeshBuilder {
             indices.add(indicesOffset + face.getIndices()[i]);
         }
         indicesOffset += face.getPositions().length;
+        return this;
     }
 
     public Mesh build() {

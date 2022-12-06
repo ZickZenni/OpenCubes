@@ -61,30 +61,6 @@ public class OpenCubes {
         world.generate();
     }
 
-    /*private void run() {
-        float elapsedTime;
-        float accumulator = 0f;
-
-        boolean running = true;
-        while (running && !window.windowShouldClose()) {
-            elapsedTime = timer.getElapsedTime();
-            accumulator += elapsedTime;
-
-            input();
-
-            while (accumulator >= frameTime) {
-                update(accumulator - frameTime);
-                accumulator -= frameTime;
-            }
-
-            render();
-
-            if (!window.isvSync()) {
-                sync();
-            }
-        }
-    }*/
-
     boolean running = true;
 
     private void run() {
@@ -105,6 +81,7 @@ public class OpenCubes {
             if (targetFps <= 0 || deltaFps >= 1) {
                 input();
             }
+
 
             if (deltaUpdate >= 1) {
                 long diffTimeMillis = now - updateTime;
@@ -136,7 +113,6 @@ public class OpenCubes {
     private void render() {
         window.update();
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0.52f, 0.8f, 0.92f, 0.0f);
         RenderSystem.renderWorld();
     }
 

@@ -66,7 +66,7 @@ public class Chunk {
         if (model == null)
             return;
 
-        RenderSystem.render3dModel(model);
+        RenderSystem.renderModel(model);
     }
 
     public void setBlock(Vector3i position, Block block) {
