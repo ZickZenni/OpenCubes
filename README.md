@@ -1,4 +1,4 @@
-![Logo]("docs/readme/title.png")
+[<img src="docs/readme/title.png" width="550"/>]()
 
 # OpenCubes
 
