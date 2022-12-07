@@ -1,7 +1,8 @@
+![Logo]("docs/readme/title.png")
+
 # OpenCubes
 
 A voxel game, that tries to bring back the old Minecraft Alpha days and make it better
-
 
 # Versions
 
