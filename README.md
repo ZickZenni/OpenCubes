@@ -6,6 +6,7 @@ A voxel game, that tries to bring back the old Minecraft Alpha days and make it 
 # Versions
 
 I am currently working only on one version: Java
+
 Sometime later i will bring a better version using C++
 
 ## Java
