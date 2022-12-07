@@ -9,7 +9,7 @@ public final class TextureManager {
     public static final float TEXTURE_SIZE = 1 / 16f;
 
     public static void loadTextures() {
-        atlas = new Texture("textures/terrainsphax.png");
+        atlas = new Texture("textures/terrain.png");
     }
 
     public static Vector2f getPosition(int id) {
