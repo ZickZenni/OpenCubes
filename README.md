@@ -21,13 +21,13 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 - [x] Rect Rendering
 - [ ] Font Rendering
-- [ ] Image Rendering
+- [x] Image Rendering
 - [ ] 3d Rendering on UI
 
 #### UI
 
 - [ ] Debug Menu (F3)
-- [ ] Main Menu
+- [ ] Main Menu (Partially done)
 - [ ] World Menu
 
 #### World
@@ -48,7 +48,7 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 #### Other
 
-- [ ] Game Settings
+- [ ] Game Settings (Currently only static)
 - [ ] Log System
 
 ## Developement
