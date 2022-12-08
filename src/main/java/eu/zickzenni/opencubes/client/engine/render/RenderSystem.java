@@ -1,7 +1,6 @@
 package eu.zickzenni.opencubes.client.engine.render;
 
 import eu.zickzenni.opencubes.OpenCubes;
-import eu.zickzenni.opencubes.client.engine.rect.Rect;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderManager;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderProgram;
 import eu.zickzenni.opencubes.world.ChunkMeshSystem;
@@ -38,11 +37,11 @@ public class RenderSystem {
 
     public static void renderWorld() {
         if (OpenCubes.getInstance().getWorld() == null || World.getCamera() == null) {
-            GL11.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            OpenCubes.getInstance().getWindow().setClearColor(0,0,0);
             return;
         }
 
-        GL11.glClearColor(0.3f, 0.3f, 0.3f, 0.0f);
+        OpenCubes.getInstance().getWindow().setClearColor(53 / 255f,81 / 255f,92 / 255f);
 
         ChunkMeshSystem.update();
         World.getCamera().getDimension().render();

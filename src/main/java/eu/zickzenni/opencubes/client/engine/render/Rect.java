@@ -1,8 +1,10 @@
-package eu.zickzenni.opencubes.client.engine.rect;
+package eu.zickzenni.opencubes.client.engine.render;
 
 import eu.zickzenni.opencubes.OpenCubes;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderManager;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderProgram;
+import eu.zickzenni.opencubes.client.engine.texture.Texture;
+import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 
@@ -22,7 +24,27 @@ public class Rect {
     private static final int vertexCount = 6;
     private static final int[] indices = new int[]{0, 1, 3, 3, 1, 2,};
 
-    public static void fill(int x1, int y1, int x2, int y2, int color) {
+    public static void fill(int x1, int y1, int x2, int y2, int z, int color) {
+        render(x1, y1, x2, y2, z, 0, 0,  0, 0, null, color);
+    }
+
+    public static void blit(int x1, int y1, int x2, int y2, int z, Texture texture) {
+        render(x1, y1, x2, y2, z, texture.getWidth(), texture.getHeight(), 0, 0,  texture,0xFFFFFF);
+    }
+
+    public static void blit(int x1, int y1, int x2, int y2, int z, float width, float height, Texture texture) {
+        render(x1, y1, x2, y2, z, width, height, 0, 0,  texture,0xFFFFFF);
+    }
+
+    public static void blit(int x1, int y1, int x2, int y2, int z, float width, float height, Texture texture, int color) {
+        render(x1, y1, x2, y2, z, width, height, 0, 0, texture,color);
+    }
+
+    public static void blit(int x1, int y1, int x2, int y2, int z, float width, float height, float uvX, float uvY, Texture texture, int color) {
+        render(x1, y1, x2, y2, z, width, height, uvX, uvY, texture,color);
+    }
+
+    private static void render(int x1, int y1, int x2, int y2, int z, float width, float height, float uvX, float uvY, Texture texture, int color) {
         int vaoId;
         List<Integer> vboIdList;
 
@@ -33,14 +55,15 @@ public class Rect {
         float ySize = 2 / windowHeight;
 
         float[] positions = new float[] {
-                x1 * xSize - 1, -y1 * ySize + 1, 0f,
-                x2 * xSize - 1, -y1 * ySize + 1, 0f,
-                x2 * xSize - 1, -y2 * ySize + 1, 0f,
-                x1 * xSize - 1, -y2 * ySize + 1, 0f,
+                x1 * xSize - 1, -y1 * ySize + 1, -z,
+                x1 * xSize - 1, -y2 * ySize + 1, -z,
+                x2 * xSize - 1, -y2 * ySize + 1, -z,
+                x2 * xSize - 1, -y1 * ySize + 1, -z,
         };
 
         FloatBuffer posBuffer = null;
         FloatBuffer colorBuffer = null;
+        FloatBuffer textCoordsBuffer = null;
         IntBuffer indicesBuffer = null;
 
         try {
@@ -77,6 +100,25 @@ public class Rect {
             glEnableVertexAttribArray(1);
             glVertexAttribPointer(1, 4, GL_FLOAT, false, 0, 0);
 
+            if (texture != null) {
+                float[] textCoords = new float[]{
+                        uvX, uvY,
+                        uvX, height / texture.getHeight(),
+                        uvX + width / texture.getWidth(), uvY + height / texture.getHeight(),
+                        uvX + width / texture.getWidth(), uvY,
+                };
+
+                // Texture coordinates VBO
+                vboId = glGenBuffers();
+                vboIdList.add(vboId);
+                textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
+                textCoordsBuffer.put(textCoords).flip();
+                glBindBuffer(GL_ARRAY_BUFFER, vboId);
+                glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
+                glEnableVertexAttribArray(2);
+                glVertexAttribPointer(2, 2, GL_FLOAT, false, 0, 0);
+            }
+
             // Index VBO
             vboId = glGenBuffers();
             vboIdList.add(vboId);
@@ -91,6 +133,9 @@ public class Rect {
             if (posBuffer != null) {
                 MemoryUtil.memFree(posBuffer);
             }
+            if (textCoordsBuffer != null) {
+                MemoryUtil.memFree(textCoordsBuffer);
+            }
             if (colorBuffer != null) {
                 MemoryUtil.memFree(colorBuffer);
             }
@@ -103,8 +148,17 @@ public class Rect {
 
         ShaderProgram shader = ShaderManager.getShader("gui");
         shader.bind();
+        shader.setUniform("blit", texture != null ? 1 : 0);
+        shader.setUniform("texture_sampler", 0);
 
         GL11.glDisable(GL11.GL_CULL_FACE);
+
+        if (texture != null) {
+            // Activate firs texture bank
+            glActiveTexture(GL_TEXTURE0);
+            // Bind the texture
+            texture.bind();
+        }
 
         // Draw the mesh
         glBindVertexArray(vaoId);

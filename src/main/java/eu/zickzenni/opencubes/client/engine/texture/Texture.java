@@ -11,12 +11,25 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 
 import javax.imageio.ImageIO;
 
 public class Texture {
+    public static class TextureData {
+        private final int id;
+        private int width;
+        private int height;
+
+        public TextureData(int id,  int width, int height) {
+            this.id = id;
+            this.width = width;
+            this.height = height;
+        }
+    }
+
     private final int id;
+    private int width;
+    private int height;
 
     public Texture(String fileName) {
         this(loadTexture(fileName, false));
@@ -26,8 +39,10 @@ public class Texture {
         this(loadTexture(fileName, inResources));
     }
 
-    public Texture(int id) {
-        this.id = id;
+    public Texture(TextureData data) {
+        this.id = data.id;
+        this.width = data.width;
+        this.height = data.height;
     }
 
     public void bind() {
@@ -38,8 +53,9 @@ public class Texture {
         return id;
     }
 
-    private static int loadTexture(String fileName, boolean inResources) {
-        int textureId = -1;
+    private static TextureData loadTexture(String fileName, boolean inResources) {
+        TextureData data = null;
+
         if (inResources) {
             try {
                 BufferedImage image = ImageIO.read(Objects.requireNonNull(Texture.class.getResourceAsStream(fileName)));
@@ -62,7 +78,7 @@ public class Texture {
                 buffer.flip();
 
                 // Create a new OpenGL texture
-                textureId = GL11.glGenTextures();
+                int textureId = GL11.glGenTextures();
 
                 // Bind the texture
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, textureId);
@@ -79,16 +95,18 @@ public class Texture {
                         GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buffer);
                 // Generate Mip Map
                 GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
+
+                data = new TextureData(textureId, image.getWidth(), image.getHeight());
             } catch (IOException e) {
                 e.printStackTrace();
             }
         } else {
-            textureId = loadSTB(fileName);
+            data = loadSTB(fileName);
         }
-        return textureId;
+        return data;
     }
 
-    private static int loadSTB(String fileName) {
+    private static TextureData loadSTB(String fileName) {
         int width;
         int height;
         ByteBuffer buf;
@@ -107,7 +125,7 @@ public class Texture {
             height = h.get();
         } catch (Exception e) {
             e.printStackTrace();
-            return -1;
+            return null;
         }
 
         // Create a new OpenGL texture
@@ -128,10 +146,18 @@ public class Texture {
         GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
 
         STBImage.stbi_image_free(buf);
-        return textureId;
+        return new TextureData(textureId, width, height);
     }
 
     public void cleanup() {
         GL11.glDeleteTextures(id);
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
     }
 }

@@ -1,4 +1,4 @@
-[<img src="banner.png" width="517"/>]()
+[<img src="src/main/resources/assets/textures/gui/logo.png" width="517"/>]()
 
 # OpenCubes
 

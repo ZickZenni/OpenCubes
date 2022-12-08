@@ -7,12 +7,18 @@ public final class TextureManager {
 
     private static Texture atlas;
     private static Texture font;
+    private static Texture logo;
+    private static Texture background;
+    private static Texture gui;
 
     public static final float TEXTURE_SIZE = 1 / 16f;
 
     public static void loadTextures() {
-        atlas = new Texture("/textures/terrain.png", true);
-        font = new Texture("/textures/font.png", true);
+        atlas = new Texture("/assets/textures/terrain.png", true);
+        font = new Texture("/assets/textures/gui/font.png", true);
+        logo = new Texture("/assets/textures/gui/logo.png", true);
+        background = new Texture("/assets/textures/gui/background.png", true);
+        gui = new Texture("/assets/textures/gui/gui.png", true);
     }
 
     public static Vector2f getPosition(int id) {
@@ -32,4 +38,15 @@ public final class TextureManager {
         return atlas;
     }
 
+    public static Texture getFont() {
+        return font;
+    }
+
+    public static Texture getLogo() {
+        return logo;
+    }
+
+    public static Texture getBackground() {
+        return background;
+    }
 }

@@ -2,12 +2,13 @@ package eu.zickzenni.opencubes;
 
 import eu.zickzenni.opencubes.client.GameSettings;
 import eu.zickzenni.opencubes.client.GameWindow;
-import eu.zickzenni.opencubes.client.engine.rect.Rect;
 import eu.zickzenni.opencubes.client.engine.render.RenderSystem;
 import eu.zickzenni.opencubes.client.engine.shader.DefaultShader;
 import eu.zickzenni.opencubes.client.engine.shader.GuiShader;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderManager;
 import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
+import eu.zickzenni.opencubes.client.gui.GuiScreen;
+import eu.zickzenni.opencubes.client.gui.MainMenuScreen;
 import eu.zickzenni.opencubes.world.World;
 import org.lwjgl.opengl.GL11;
 
@@ -26,6 +27,8 @@ public class OpenCubes {
     private int targetUps = 100;
 
     private GameWindow window;
+    private GuiScreen screen;
+
     private World world;
 
     private OpenCubes() throws Exception {
@@ -45,6 +48,12 @@ public class OpenCubes {
     }
 
     private void start() {
+        window.setClearColor(0,0,0);
+    }
+
+    public void generateWorld() {
+        if (world != null)
+            return;
         world = World.createWorld("World");
         world.generate();
     }
@@ -97,15 +106,31 @@ public class OpenCubes {
             if (World.getCamera() != null) {
                 world.update(interval);
             }
+        } else {
+            if (screen != null) {
+                //screen.render();
+            } else {
+                MainMenuScreen.update(interval);
+            }
         }
     }
 
     private void render() {
         window.update();
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
-        RenderSystem.renderWorld();
 
-        //Rect.fill(0,0,100,100, 0xFFFFFF);
+        if (world == null) {
+            if (screen != null) {
+                screen.render();
+            } else {
+                MainMenuScreen.render();
+            }
+        } else {
+            RenderSystem.renderWorld();
+            if (screen != null) {
+                screen.render();
+            }
+        }
     }
 
     public static OpenCubes getInstance() {
@@ -114,6 +139,14 @@ public class OpenCubes {
 
     public GameWindow getWindow() {
         return this.window;
+    }
+
+    public GuiScreen getScreen() {
+        return screen;
+    }
+
+    public void setScreen(GuiScreen screen) {
+        this.screen = screen;
     }
 
     public World getWorld() {

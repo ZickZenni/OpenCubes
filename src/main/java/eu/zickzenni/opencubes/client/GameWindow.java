@@ -114,8 +114,8 @@ public class GameWindow {
 
     /////
 
-    public void setClearColor(float r, float g, float b, float alpha) {
-        GL11.glClearColor(r, g, b, alpha);
+    public void setClearColor(float r, float g, float b) {
+        GL11.glClearColor(r, g, b, 1);
     }
 
     public String getTitle() {
@@ -155,7 +155,7 @@ public class GameWindow {
         return handle;
     }
 
-    public boolean isvSync() {
+    public boolean isVSync() {
         return vSync;
     }
 
@@ -170,10 +170,6 @@ public class GameWindow {
     public Matrix4f updateProjection(Matrix4f matrix, int width, int height)  {
         float aspectRatio = (float) width / height;
         return matrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
-    }
-
-    public Matrix4f update2dProjection()  {
-        return projection.frustum(0, width, height, 0, Z_NEAR, Z_FAR);
     }
 
     public boolean windowShouldClose() {

@@ -108,7 +108,7 @@ public class ShaderProgram {
 
     protected static String loadResource(String fileName) throws Exception {
         String result = null;
-        try (InputStream in = Class.forName(ShaderProgram.class.getName()).getResourceAsStream(fileName);
+        try (InputStream in = ShaderProgram.class.getResourceAsStream(fileName);
              Scanner scanner = new Scanner(in, "UTF-8")) {
             result = scanner.useDelimiter("\\A").next();
         } catch (NullPointerException exception) {
