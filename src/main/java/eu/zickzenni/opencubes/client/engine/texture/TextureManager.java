@@ -6,10 +6,13 @@ public final class TextureManager {
     private TextureManager() {}
 
     private static Texture atlas;
+    private static Texture font;
+
     public static final float TEXTURE_SIZE = 1 / 16f;
 
     public static void loadTextures() {
-        atlas = new Texture("textures/terrain.png");
+        atlas = new Texture("/textures/terrain.png", true);
+        font = new Texture("/textures/font.png", true);
     }
 
     public static Vector2f getPosition(int id) {

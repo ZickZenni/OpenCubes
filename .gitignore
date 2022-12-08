@@ -1,4 +1,6 @@
 hs_err*.log
+replay*.log
+
 build
 .gradle
 .idea
