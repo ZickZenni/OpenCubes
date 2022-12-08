@@ -172,6 +172,10 @@ public class GameWindow {
         return matrix.setPerspective(FOV, aspectRatio, Z_NEAR, Z_FAR);
     }
 
+    public Matrix4f update2dProjection()  {
+        return projection.frustum(0, width, height, 0, Z_NEAR, Z_FAR);
+    }
+
     public boolean windowShouldClose() {
         return GLFW.glfwWindowShouldClose(handle);
     }

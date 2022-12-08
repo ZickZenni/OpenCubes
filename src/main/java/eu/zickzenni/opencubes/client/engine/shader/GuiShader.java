@@ -5,8 +5,5 @@ public class GuiShader extends ShaderProgram {
         createVertexShader(loadResource("/shaders/" + vertexFile));
         createFragmentShader(loadResource("/shaders/" + fragmentFile));
         link();
-
-        createUniform("projectionMatrix");
-        createUniform("texture_sampler");
     }
 }

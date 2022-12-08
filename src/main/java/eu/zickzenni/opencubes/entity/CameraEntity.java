@@ -13,12 +13,13 @@ import static org.lwjgl.glfw.GLFW.*;
 public class CameraEntity extends Entity {
     public CameraEntity(int id, Dimension dimension) {
         super(id, dimension);
-        setRotation(90,0,0);
+        setRotation(0,0,0);
     }
 
     @Override
     public Vector3f getSpawnLocation() {
-        return getDefaultSpawnLocation().add(0, 200, 0);
+        //return getDefaultSpawnLocation().add(0, 0, 0);
+        return new Vector3f(0,100,0);
     }
 
     @Override
@@ -42,7 +43,7 @@ public class CameraEntity extends Entity {
             movement.y += 1;
         }
 
-        float speed = 14;
+        float speed = window.isKeyPressed(GLFW_KEY_LEFT_CONTROL) ? 14 * 2.7f : 14;
         // Update camera position
         movePosition(movement.x * speed * interval, movement.y * speed * interval, movement.z * speed * interval);
 

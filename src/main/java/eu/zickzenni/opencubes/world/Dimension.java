@@ -1,5 +1,6 @@
 package eu.zickzenni.opencubes.world;
 
+import eu.zickzenni.opencubes.client.GameSettings;
 import eu.zickzenni.opencubes.world.generation.WorldGenerator;
 import org.joml.Vector2i;
 
@@ -21,7 +22,7 @@ public class Dimension {
     }
 
     public void generate() {
-        int radius = world.getRenderDistance();
+        int radius = GameSettings.renderDistance;
         try {
             for (int cX = -radius; cX < radius; cX++) {
                 for (int cZ = -radius; cZ < radius; cZ++) {

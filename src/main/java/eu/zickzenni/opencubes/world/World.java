@@ -1,5 +1,6 @@
 package eu.zickzenni.opencubes.world;
 
+import eu.zickzenni.opencubes.client.GameSettings;
 import eu.zickzenni.opencubes.entity.CameraEntity;
 import eu.zickzenni.opencubes.entity.Entity;
 import eu.zickzenni.opencubes.util.SimpleProfiler;
@@ -18,8 +19,6 @@ public class World {
     private ArrayList<Entity> entities = new ArrayList<>();
 
     private static CameraEntity camera;
-
-    private int renderDistance = 8;
 
     public static World createWorld(String name) {
         return new World(name);
@@ -50,10 +49,15 @@ public class World {
         }
     }
 
+    public void update(float interval) {
+        updatePlayerChunks();
+        updateEntities(interval);
+    }
+
     private List<ChunkPosition> chunksToRemove = new ArrayList<>();
     private List<ChunkPosition> newChunks = new ArrayList<>();
 
-    public void update(float interval) {
+    private void updatePlayerChunks() {
         int plrChunkX = (int) camera.getPosition().x / 16;
         int plrChunkZ = (int) camera.getPosition().z / 16;
         chunksToRemove.clear();
@@ -65,8 +69,8 @@ public class World {
             chunksToRemove.add(pair.getKey());
         }
 
-        for (int x = plrChunkX - renderDistance; x < plrChunkX + renderDistance; x++) {
-            for (int z = plrChunkZ - renderDistance; z < plrChunkZ + renderDistance; z++) {
+        for (int x = plrChunkX - GameSettings.renderDistance; x < plrChunkX + GameSettings.renderDistance; x++) {
+            for (int z = plrChunkZ - GameSettings.renderDistance; z < plrChunkZ + GameSettings.renderDistance; z++) {
                 ChunkPosition chunkCoord = new ChunkPosition(x, z);
                 if (!camera.getDimension().getChunks().containsKey(chunkCoord)) {
                     try {
@@ -121,7 +125,9 @@ public class World {
                 }
             }
         }
+    }
 
+    private void updateEntities(float interval) {
         Iterator<Entity> it = entities.iterator();
         while (it.hasNext()) {
             Entity pair = it.next();
@@ -131,10 +137,6 @@ public class World {
 
     public String getName() {
         return name;
-    }
-
-    public int getRenderDistance() {
-        return renderDistance;
     }
 
     public ArrayList<Entity> getEntities() {

@@ -64,6 +64,7 @@ public class Mesh {
         this.textCoords = Converter.convertFloat(tex);
         this.indices = Converter.convertInt(ind);
         this.colors = Converter.convertFloat(col);
+        this.faces = new Face[0];
         create(texture);
     }
 

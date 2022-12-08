@@ -1,5 +1,6 @@
 package eu.zickzenni.opencubes.client.engine.render;
 
+import eu.zickzenni.opencubes.client.engine.rect.Rect;
 import eu.zickzenni.opencubes.world.World;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -7,6 +8,7 @@ import org.joml.Vector3f;
 public class Transform {
     private static final Matrix4f viewMatrix = new Matrix4f();
     private static final Matrix4f modelViewMatrix = new Matrix4f();
+    private static final Matrix4f rectViewMatrix = new Matrix4f();
     private static final Matrix4f orthoMatrix = new Matrix4f();
 
     public static Matrix4f getOrthoProjectionMatrix(float left, float right, float bottom, float top) {
@@ -37,5 +39,11 @@ public class Transform {
                 scale(model.getScale());
         Matrix4f viewCurr = new Matrix4f(viewMatrix);
         return viewCurr.mul(modelViewMatrix);
+    }
+
+    public static Matrix4f getRectViewMatrix(Rect rect, Matrix4f viewMatrix) {
+        rectViewMatrix.identity();
+        Matrix4f viewCurr = new Matrix4f(viewMatrix);
+        return viewCurr.mul(rectViewMatrix);
     }
 }

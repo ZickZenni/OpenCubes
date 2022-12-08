@@ -1,10 +1,10 @@
-[<img src="docs/readme/title.png" width="550"/>]()
+[<img src="banner.png" width="517"/>]()
 
 # OpenCubes
 
 A voxel game, that tries to bring back the old Minecraft Alpha days and make it better
 
-# Versions
+## Versions
 
 I am currently working only on one version: Java
 
@@ -17,10 +17,45 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 ### Todo
 
- - 2d Rendering
- - Better world generation
- - Biomes
- - Main Menu
- - World Menu
- - Player Controller
- - Entities
+#### Renderer
+
+- [x] Rect Rendering
+- [ ] Font Rendering
+- [ ] Image Rendering
+- [ ] 3d Rendering on UI
+
+#### UI
+
+- [ ] Debug Menu (F3)
+- [ ] Main Menu
+- [ ] World Menu
+
+#### World
+
+- [ ] World creation
+- [ ] Better world generation
+- [ ] Biomes
+
+#### Entities
+
+- [ ] Player Controller
+
+#### Player
+
+- [ ] Creative
+- [ ] Hotbar
+- [ ] Player Inventory
+
+#### Other
+
+- [ ] Game Settings
+- [ ] Log System
+
+## Developement
+
+### IntelliJ
+I use IntelliJ Idea for developement, so i know that it will work with it.
+
+Open build.gradle as a project and you can start working instantly
+
+You may need to add a new configuration to run the game

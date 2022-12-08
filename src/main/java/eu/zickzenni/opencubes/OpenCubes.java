@@ -1,26 +1,15 @@
 package eu.zickzenni.opencubes;
 
-import eu.zickzenni.opencubes.block.Blocks;
+import eu.zickzenni.opencubes.client.GameSettings;
 import eu.zickzenni.opencubes.client.GameWindow;
-import eu.zickzenni.opencubes.client.engine.mesh.Mesh;
-import eu.zickzenni.opencubes.client.engine.render.Model;
+import eu.zickzenni.opencubes.client.engine.rect.Rect;
 import eu.zickzenni.opencubes.client.engine.render.RenderSystem;
-import eu.zickzenni.opencubes.client.engine.render.Transform;
 import eu.zickzenni.opencubes.client.engine.shader.DefaultShader;
 import eu.zickzenni.opencubes.client.engine.shader.GuiShader;
 import eu.zickzenni.opencubes.client.engine.shader.ShaderManager;
-import eu.zickzenni.opencubes.client.engine.shader.ShaderProgram;
-import eu.zickzenni.opencubes.client.engine.texture.Texture;
 import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
-import eu.zickzenni.opencubes.client.engine.util.Timer;
 import eu.zickzenni.opencubes.world.World;
-import org.joml.Matrix4f;
-import org.joml.Vector2f;
-import org.joml.Vector3f;
-import org.lwjgl.opengl.*;
-
-import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
+import org.lwjgl.opengl.GL11;
 
 public class OpenCubes {
     public static void main(String[] args) {
@@ -34,7 +23,6 @@ public class OpenCubes {
 
     private static OpenCubes instance;
 
-    private int targetFps = 144;
     private int targetUps = 100;
 
     private GameWindow window;
@@ -43,7 +31,7 @@ public class OpenCubes {
     private OpenCubes() throws Exception {
         instance = this;
 
-        this.window = new GameWindow("OpenCubes", 856, 482, false);
+        this.window = new GameWindow("OpenCubes", 856, 482, GameSettings.vSync);
         this.window.init();
 
         ShaderManager.registerShader("default", new DefaultShader("default.vert", "default.frag"));
@@ -64,6 +52,8 @@ public class OpenCubes {
     boolean running = true;
 
     private void run() {
+        int targetFps = GameSettings.fps;
+
         long initialTime = System.currentTimeMillis();
         float timeU = 1000.0f / targetUps;
         float timeR = targetFps > 0 ? 1000.0f / targetFps : 0;
@@ -112,8 +102,10 @@ public class OpenCubes {
 
     private void render() {
         window.update();
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         RenderSystem.renderWorld();
+
+        //Rect.fill(0,0,100,100, 0xFFFFFF);
     }
 
     public static OpenCubes getInstance() {
