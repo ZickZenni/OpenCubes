@@ -1,4 +1,4 @@
-[<img src="docs/readme/title.png" width="550"/>]()
+[<img src="docs/readme/banner.png" width="517"/>]()
 
 # OpenCubes
 
