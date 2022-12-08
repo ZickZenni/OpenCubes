@@ -17,13 +17,25 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 ### Todo
 
- - 2d Rendering
- - Better world generation
- - Biomes
- - Main Menu
- - World Menu
- - Player Controller
- - Entities
+#### Rendering
+
+- [ ] 2d Rects
+
+#### UI
+
+- [ ] Main Menu
+- [ ] World Menu
+
+#### World
+ 
+- [ ] Better world generation
+- [ ] Biomes
+
+#### Entities
+
+- [ ] Player Controller
+
+
 
 # Developement
 
@@ -31,6 +43,3 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 I use IntelliJ Idea for developement, so i know that it will work with it.
 
 Open build.gradle as a project and you can start working instantly
-
-## Others
-I currently don't know, if my projects works with other IDEs 
