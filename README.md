@@ -24,3 +24,13 @@ It's currently **work in progress**, so there will be many bugs and probably lag
  - World Menu
  - Player Controller
  - Entities
+
+# Developement
+
+## IntelliJ
+I use IntelliJ Idea for developement, so i know that it will work with it.
+
+Open build.gradle as a project and you can start working instantly
+
+## Others
+I currently don't know, if my projects works with other IDEs 
