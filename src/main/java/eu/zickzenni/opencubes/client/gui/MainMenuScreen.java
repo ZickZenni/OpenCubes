@@ -1,6 +1,7 @@
 package eu.zickzenni.opencubes.client.gui;
 
 import eu.zickzenni.opencubes.OpenCubes;
+import eu.zickzenni.opencubes.client.engine.render.FontRenderer;
 import eu.zickzenni.opencubes.client.engine.render.Rect;
 import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
 import org.lwjgl.glfw.GLFW;
@@ -38,6 +39,8 @@ public final class MainMenuScreen  {
 
         int y = 60;
         Rect.blit(logoX,y,TextureManager.getLogo().getWidth() + logoX, TextureManager.getLogo().getHeight() + y, 1, TextureManager.getLogo());
+
+        FontRenderer.renderString("OpenCubes v0.0.1", 3, 3, 1, 0xFFFFFF);
     }
 
     private static void renderBackground() {

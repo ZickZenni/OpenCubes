@@ -197,10 +197,10 @@ public class ChunkMeshSystem {
         float colorG = lightLevel * tint.y;
         float colorB = lightLevel * tint.z;
         return new float[]{
-                colorR, colorG, colorB,
-                colorR, colorG, colorB,
-                colorR, colorG, colorB,
-                colorR, colorG, colorB,
+                colorR, colorG, colorB, 1,
+                colorR, colorG, colorB, 1,
+                colorR, colorG, colorB, 1,
+                colorR, colorG, colorB, 1,
         };
     }
 }

@@ -2,7 +2,6 @@ package eu.zickzenni.opencubes.client.engine.mesh;
 
 import eu.zickzenni.opencubes.client.engine.texture.Texture;
 import eu.zickzenni.opencubes.client.engine.util.Converter;
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryUtil;
 
 import java.nio.FloatBuffer;
@@ -20,76 +19,65 @@ import static org.lwjgl.opengl.GL30.*;
 public class Mesh {
     private int vaoId;
     private List<Integer> vboIdList;
-    private int vertexCount;
+
     private Texture texture;
 
-    private Face[] faces;
-    private float[] positions;
-    private float[] textCoords;
+    private final int vertexCount;
+    private final float[] vertices;
+    private final float[] textCoords;
+    private final float[] colors;
+    private final int[] indices;
 
-    private float[] colors;
-    private boolean hasColors = true;
-
-    private int[] indices;
     private boolean created = false;
 
+    public Mesh(Face face, Texture texture) {
+        this(new Face[]{face}, texture);
+    }
+
     public Mesh(Face[] faces, Texture texture) {
-        this.faces = faces;
         ArrayList<Float> pos = new ArrayList<>();
         ArrayList<Float> tex = new ArrayList<>();
         ArrayList<Float> col = new ArrayList<>();
         ArrayList<Integer> ind = new ArrayList<>();
 
         for (Face face : faces) {
-            for (Vector3f position : face.getPositions()) {
-                pos.add(position.x);
-                pos.add(position.y);
-                pos.add(position.z);
+            for (float position : face.getVertices()) {
+                pos.add(position);
             }
 
-            for (int x = 0; x < face.getTextureCoords().length; x++) {
-                tex.add(face.getTextureCoords()[x]);
+            for (float textureCoord : face.getTextureCoords()) {
+                tex.add(textureCoord);
             }
 
             for (float color : face.getColors()) {
                 col.add(color);
             }
 
-            for (int y = 0; y < face.getIndices().length; y++) {
-                ind.add(face.getIndices()[y]);
+            for (int index : face.getIndices()) {
+                ind.add(index);
             }
         }
 
-        this.positions = Converter.convertFloat(pos);
+        this.vertices = Converter.convertFloat(pos);
         this.textCoords = Converter.convertFloat(tex);
         this.indices = Converter.convertInt(ind);
+        this.vertexCount = this.indices.length;
         this.colors = Converter.convertFloat(col);
-        this.faces = new Face[0];
-        create(texture);
+        this.texture = texture;
+        create();
     }
 
-    public Mesh(float[] positions, float[] textCoords, float[] colors, int[] indices, Texture texture, boolean createLater) {
-        this.positions = positions;
+    public Mesh(float[] vertices, float[] textCoords, float[] colors, int[] indices, Texture texture) {
+        this.vertices = vertices;
         this.textCoords = textCoords;
         this.indices = indices;
+        this.vertexCount = this.indices.length;
         this.colors = colors;
-        if (!createLater) {
-            create(texture);
-        }
+        this.texture = texture;
+        create();
     }
 
-    public Mesh(float[] positions, float[] textCoords, int[] indices, Texture texture, boolean createLater) {
-        this.positions = positions;
-        this.textCoords = textCoords;
-        this.indices = indices;
-        this.colors = new float[0];
-        this.hasColors = false;
-        if (!createLater) {
-            create(texture);
-        }
-    }
-
-    private void create(Texture texture) {
+    private void create() {
         if (created) {
             return;
         }
@@ -99,8 +87,6 @@ public class Mesh {
         FloatBuffer colorBuffer = null;
         IntBuffer indicesBuffer = null;
         try {
-            this.texture = texture;
-            vertexCount = indices.length;
             vboIdList = new ArrayList<>();
 
             vaoId = glGenVertexArrays();
@@ -109,34 +95,34 @@ public class Mesh {
             // Position VBO
             int vboId = glGenBuffers();
             vboIdList.add(vboId);
-            posBuffer = MemoryUtil.memAllocFloat(positions.length);
-            posBuffer.put(positions).flip();
+            posBuffer = MemoryUtil.memAllocFloat(vertices.length);
+            posBuffer.put(vertices).flip();
             glBindBuffer(GL_ARRAY_BUFFER, vboId);
             glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
-            // Texture coordinates VBO
-            vboId = glGenBuffers();
-            vboIdList.add(vboId);
-            textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
-            textCoordsBuffer.put(textCoords).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-            glEnableVertexAttribArray(1);
-            glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
-
-            if (hasColors) {
-                // Colors VBO
+            if (textCoords.length != 0) {
+                // Texture coordinates VBO
                 vboId = glGenBuffers();
                 vboIdList.add(vboId);
-                colorBuffer = MemoryUtil.memAllocFloat(colors.length);
-                colorBuffer.put(colors).flip();
+                textCoordsBuffer = MemoryUtil.memAllocFloat(textCoords.length);
+                textCoordsBuffer.put(textCoords).flip();
                 glBindBuffer(GL_ARRAY_BUFFER, vboId);
-                glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
-                glEnableVertexAttribArray(2);
-                glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
+                glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
+                glEnableVertexAttribArray(1);
+                glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
             }
+
+            // Colors VBO
+            vboId = glGenBuffers();
+            vboIdList.add(vboId);
+            colorBuffer = MemoryUtil.memAllocFloat(colors.length);
+            colorBuffer.put(colors).flip();
+            glBindBuffer(GL_ARRAY_BUFFER, vboId);
+            glBufferData(GL_ARRAY_BUFFER, colorBuffer, GL_STATIC_DRAW);
+            glEnableVertexAttribArray(2);
+            glVertexAttribPointer(2, 4, GL_FLOAT, false, 0, 0);
 
             // Index VBO
             vboId = glGenBuffers();
@@ -174,10 +160,12 @@ public class Mesh {
     }
 
     public void render() {
-        // Activate firs texture bank
-        glActiveTexture(GL_TEXTURE0);
-        // Bind the texture
-        texture.bind();
+        if (texture != null) {
+            // Activate firs texture bank
+            glActiveTexture(GL_TEXTURE0);
+            // Bind the texture
+            texture.bind();
+        }
 
         // Draw the mesh
         glBindVertexArray(getVaoId());
@@ -202,12 +190,8 @@ public class Mesh {
         glDeleteVertexArrays(vaoId);
     }
 
-    public Face[] getFaces() {
-        return faces;
-    }
-
-    public float[] getPositions() {
-        return positions;
+    public float[] getVertices() {
+        return vertices;
     }
 
     public float[] getTextCoords() {
@@ -220,5 +204,13 @@ public class Mesh {
 
     public int[] getIndices() {
         return indices;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 }

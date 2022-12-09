@@ -3,17 +3,25 @@ package eu.zickzenni.opencubes.client.engine.mesh;
 import eu.zickzenni.opencubes.client.engine.texture.Texture;
 import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
 import eu.zickzenni.opencubes.client.engine.util.Converter;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
 public class MeshBuilder {
-    private ArrayList<Vector3f> vertices = new ArrayList<>();
-    private ArrayList<Float> texCoords = new ArrayList<>();
-    private ArrayList<Float> colors = new ArrayList<>();
-    private ArrayList<Integer> indices = new ArrayList<>();
+    private static class MeshBuilderFace {
+        private Face face;
+        private float offsetX;
+        private float offsetY;
+        private float offsetZ;
 
-    private int indicesOffset = 0;
+        public MeshBuilderFace(Face face, float offsetX, float offsetY, float offsetZ) {
+            this.face = face;
+            this.offsetX = offsetX;
+            this.offsetY = offsetY;
+            this.offsetZ = offsetZ;
+        }
+    }
+
+    private ArrayList<MeshBuilderFace> faces = new ArrayList<>();
 
     public MeshBuilder addFace(Face face) {
         return addFace(face, 0, 0, 0);
@@ -23,20 +31,7 @@ public class MeshBuilder {
         if (face == null) {
             return this;
         }
-        for (Vector3f position : face.getPositions()) {
-            vertices.add(position.add(offsetX, offsetY, offsetZ));
-        }
-        for (int i = 0; i < face.getTextureCoords().length; i++) {
-            texCoords.add(face.getTextureCoords()[i]);
-        }
-        for (float color : face.getColors()) {
-            colors.add(color);
-        }
-
-        for (int i = 0; i < face.getIndices().length; i++) {
-            indices.add(indicesOffset + face.getIndices()[i]);
-        }
-        indicesOffset += face.getPositions().length;
+        faces.add(new MeshBuilderFace(face, offsetX, offsetY, offsetZ));
         return this;
     }
 
@@ -45,22 +40,41 @@ public class MeshBuilder {
     }
 
     public Mesh build(Texture texture) {
-        Mesh mesh = new Mesh(Converter.convertVector3f(vertices), Converter.convertFloat(texCoords), Converter.convertFloat(colors), Converter.convertInt(indices), texture, false);
+        ArrayList<Float> vertices = new ArrayList<>();
+        ArrayList<Float> tex = new ArrayList<>();
+        ArrayList<Float> col = new ArrayList<>();
+        ArrayList<Integer> ind = new ArrayList<>();
+
+        int indicesOffset = 0;
+        for (MeshBuilderFace mFace : faces) {
+            Face face = mFace.face;
+            for (int i = 0; i < face.getVertices().length / 3; i++) {
+                vertices.add(face.getVertices()[i * 3] + mFace.offsetX);
+                vertices.add(face.getVertices()[i * 3 + 1] + mFace.offsetY);
+                vertices.add(face.getVertices()[i * 3 + 2] + mFace.offsetZ);
+            }
+
+            for (float textureCoord : face.getTextureCoords()) {
+                tex.add(textureCoord);
+            }
+            for (float color : face.getColors()) {
+                col.add(color);
+            }
+            for (int index : face.getIndices()) {
+                ind.add(indicesOffset + index);
+            }
+            indicesOffset += face.getVertices().length / 3;
+        }
+        Mesh mesh = new Mesh(Converter.convertFloat(vertices), Converter.convertFloat(tex), Converter.convertFloat(col), Converter.convertInt(ind), texture);
         clear();
         return mesh;
     }
 
     public void clear() {
-        vertices.clear();
-        texCoords.clear();
-        colors.clear();
-        indices.clear();
+        faces.clear();
     }
 
     public void copy(MeshBuilder builder) {
-        this.vertices = builder.vertices;
-        this.texCoords = builder.texCoords;
-        this.colors = builder.colors;
-        this.indices = builder.indices;
+        this.faces = builder.faces;
     }
 }

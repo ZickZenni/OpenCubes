@@ -45,5 +45,11 @@ public class RenderSystem {
 
         ChunkMeshSystem.update();
         World.getCamera().getDimension().render();
+
+        FontRenderer.renderString("Position: "
+                + String.format(java.util.Locale.US,"%.2f", World.getCamera().getPosition().x) + ","
+                + String.format(java.util.Locale.US,"%.2f", World.getCamera().getPosition().y) + ","
+                + String.format(java.util.Locale.US,"%.2f", World.getCamera().getPosition().z)
+                , 3, 3, 1, 0xFFFFFF);
     }
 }
