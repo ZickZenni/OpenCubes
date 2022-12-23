@@ -3,16 +3,19 @@ package eu.zickzenni.opencubes.client.input;
 import eu.zickzenni.opencubes.client.GameWindow;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-
-import static org.lwjgl.glfw.GLFW.*;
+import org.lwjgl.glfw.GLFW;
 
 public class MouseInput {
     private final Vector2d previousPos;
     private final Vector2d currentPos;
     private final Vector2f displVec;
     private boolean inWindow = false;
+
     private boolean leftButtonPressed = false;
     private boolean rightButtonPressed = false;
+    private boolean cursorLocked = false;
+
+    private GameWindow window;
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
@@ -21,16 +24,21 @@ public class MouseInput {
     }
 
     public void init(GameWindow window) {
-        glfwSetCursorPosCallback(window.getHandle(), (windowHandle, xpos, ypos) -> {
+        this.window = window;
+        GLFW.glfwSetCursorPosCallback(window.getHandle(), (windowHandle, xpos, ypos) -> {
             currentPos.x = xpos;
             currentPos.y = ypos;
         });
-        glfwSetCursorEnterCallback(window.getHandle(), (windowHandle, entered) -> {
+        GLFW.glfwSetCursorEnterCallback(window.getHandle(), (windowHandle, entered) -> {
             inWindow = entered;
         });
-        glfwSetMouseButtonCallback(window.getHandle(), (windowHandle, button, action, mode) -> {
-            leftButtonPressed = button == GLFW_MOUSE_BUTTON_1 && action == GLFW_PRESS;
-            rightButtonPressed = button == GLFW_MOUSE_BUTTON_2 && action == GLFW_PRESS;
+        GLFW.glfwSetMouseButtonCallback(window.getHandle(), (windowHandle, button, action, mode) -> {
+            if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
+                leftButtonPressed = action == GLFW.GLFW_PRESS;
+            }
+            if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
+                rightButtonPressed = action == GLFW.GLFW_PRESS;
+            }
         });
     }
 
@@ -41,7 +49,7 @@ public class MouseInput {
     public void input() {
         displVec.x = 0;
         displVec.y = 0;
-        if (previousPos.x > 0 && previousPos.y > 0 && inWindow) {
+        if (inWindow) {
             double deltax = currentPos.x - previousPos.x;
             double deltay = currentPos.y - previousPos.y;
             boolean rotateX = deltax != 0;
@@ -57,11 +65,23 @@ public class MouseInput {
         previousPos.y = currentPos.y;
     }
 
+    public void setPosition(int x, int y) {
+        GLFW.glfwSetCursorPos(window.getHandle(), x, y);
+    }
+
     public boolean isLeftButtonPressed() {
         return leftButtonPressed;
     }
 
     public boolean isRightButtonPressed() {
         return rightButtonPressed;
+    }
+
+    public boolean isCursorLocked() {
+        return cursorLocked;
+    }
+
+    public void setCursorLocked(boolean cursorLocked) {
+        this.cursorLocked = cursorLocked;
     }
 }

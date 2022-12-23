@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="runClient" type="Application" factoryName="Application">
-    <option name="MAIN_CLASS_NAME" value="eu.zickzenni.opencubes.OpenCubes" />
+    <option name="MAIN_CLASS_NAME" value="eu.zickzenni.opencubes.client.OpenCubes" />
     <module name="OpenCubes.main" />
     <option name="PROGRAM_PARAMETERS" value="--username Dev" />
     <extension name="net.ashald.envfile">

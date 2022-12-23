@@ -1,18 +1,20 @@
 package eu.zickzenni.opencubes.client;
 
+import eu.zickzenni.opencubes.client.input.KeyboardInput;
 import eu.zickzenni.opencubes.client.input.MouseInput;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
-
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.glfwGetKey;
-
 public class GameWindow {
+    private static final Logger logger = LogManager.getLogger("GameWindow");
+
     public static final float FOV = (float) Math.toRadians(80);
     public static final float Z_NEAR = 0.01f;
     public static final float Z_FAR = 1000;
@@ -24,6 +26,7 @@ public class GameWindow {
     private boolean resize, vSync;
 
     private MouseInput mouseInput;
+    private KeyboardInput keyboardInput;
 
     private final Matrix4f projection;
 
@@ -34,13 +37,18 @@ public class GameWindow {
         this.vSync = vSync;
         this.projection = new Matrix4f();
         this.mouseInput = new MouseInput();
+        this.keyboardInput = new KeyboardInput();
     }
 
     public boolean init() {
         GLFWErrorCallback.createPrint(System.err).set();
 
+        logger.info("Initializing glfw...");
+
         if (!GLFW.glfwInit())
             return false;
+
+        logger.info("Initialized glfw!");
 
         GLFW.glfwDefaultWindowHints();
         GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GL11.GL_FALSE);
@@ -53,6 +61,8 @@ public class GameWindow {
         handle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, MemoryUtil.NULL);
         if (handle == MemoryUtil.NULL)
             return false;
+
+        logger.info("Created window with size " + width + "x" + height);
 
         GLFW.glfwSetFramebufferSizeCallback(handle, (handle, width, height) -> {
             this.width = width;
@@ -70,10 +80,7 @@ public class GameWindow {
         GLFW.glfwSetWindowPos(handle, (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
 
         GLFW.glfwMakeContextCurrent(handle);
-
-        if (vSync) {
-            GLFW.glfwSwapInterval(1);
-        }
+        GLFW.glfwSwapInterval(vSync ? 1 : 0);
 
         GLFW.glfwShowWindow(handle);
         GL.createCapabilities();
@@ -85,12 +92,19 @@ public class GameWindow {
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         mouseInput.init(this);
+        keyboardInput.init(this);
         return true;
     }
 
 
     public void update() {
         GLFW.glfwSwapBuffers(handle);
+
+        if (isFocused()) {
+            GLFW.glfwSetInputMode(handle, GLFW.GLFW_CURSOR, mouseInput.isCursorLocked() ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+        } else {
+            GLFW.glfwSetInputMode(handle, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        }
 
         if (resize) {
             GL11.glViewport(0, 0, width, height);
@@ -99,7 +113,9 @@ public class GameWindow {
     }
 
     public void cleanup() {
+        Callbacks.glfwFreeCallbacks(handle);
         GLFW.glfwDestroyWindow(handle);
+        GLFW.glfwTerminate();
     }
 
     ///// Input
@@ -108,8 +124,8 @@ public class GameWindow {
         return mouseInput;
     }
 
-    public boolean isKeyPressed(int keyCode) {
-        return glfwGetKey(handle, keyCode) == GLFW_PRESS;
+    public KeyboardInput getKeyboardInput() {
+        return keyboardInput;
     }
 
     /////
@@ -145,6 +161,10 @@ public class GameWindow {
 
     public boolean isResize() {
         return resize;
+    }
+
+    public boolean isFocused() {
+        return GLFW.glfwGetWindowAttrib(handle, GLFW.GLFW_FOCUSED) == 1;
     }
 
     public void setResize(boolean resize) {

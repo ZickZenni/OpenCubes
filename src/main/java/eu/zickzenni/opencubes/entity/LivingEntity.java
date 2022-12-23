@@ -1,6 +1,8 @@
 package eu.zickzenni.opencubes.entity;
 
 import eu.zickzenni.opencubes.world.Dimension;
+import eu.zickzenni.opencubes.world.chunk.ChunkPosition;
+import org.joml.Vector3f;
 
 public class LivingEntity extends Entity {
     private int health;
@@ -11,12 +13,20 @@ public class LivingEntity extends Entity {
         super(id, dimension);
         health = 20;
         maxHealth = 20;
-        gravity = 8;
+        gravity = 20;
     }
 
     @Override
-    public void update(float interval) {
-        movePosition(0, (8 * 0.07f) * interval, 0);
+    public Vector3f getSpawnLocation() {
+        return new Vector3f(0, getDimension().getChunk(new ChunkPosition(0,0)).raycastY(0, 0, 255, 50) + 10, 0);
+    }
+
+    @Override
+    public void update() {
+        movePosition(0, -(gravity * 0.7f), 0);
+        if (getDimension().getChunk(new ChunkPosition((int)getPosition().x / 16, (int)getPosition().z / 16)).doesBlockExist(Math.floorMod((int)getPosition().x, 16), (int)getPosition().y, Math.floorMod((int)getPosition().z, 16))) {
+            setPosition(getPosition().x, Math.round(getPosition().y), getPosition().z);
+        }
     }
 
     public int getHealth() {

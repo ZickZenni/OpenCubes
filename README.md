@@ -20,13 +20,17 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 #### Renderer
 
 - [x] Rect Rendering
-- [ ] Font Rendering
+- [x] Font Rendering
 - [x] Image Rendering
 - [ ] 3d Rendering on UI
 
+#### Blocks
+
+- [ ] Load Block Models from resources
+
 #### UI
 
-- [ ] Debug Menu (F3)
+- [x] Debug Menu (F3)
 - [ ] Main Menu (Partially done)
 - [ ] World Menu
 
@@ -35,6 +39,7 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 - [ ] World creation
 - [ ] Better world generation
 - [ ] Biomes
+- [ ] Lighting Engine
 
 #### Entities
 
@@ -45,17 +50,47 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 - [ ] Creative
 - [ ] Hotbar
 - [ ] Player Inventory
+- [x] Block Placing/Breaking
+
+#### Util
+
+- [x] Raycasting
 
 #### Other
 
+- [x] Sound System
 - [ ] Game Settings (Currently only static)
-- [ ] Log System
+- [x] Log System
+- [ ] Saving Logs to Disk
+- [x] Locked Mouse
+- [x] Crosshair
 
 ## Developement
 
 ### IntelliJ
-I use IntelliJ Idea for developement, so i know that it will work with it.
 
-Open build.gradle as a project and you can start working instantly
+Open build.gradle as a project and you can start working instantly.
 
-You may need to add a new configuration to run the game
+### Building and Running
+
+Currently there is no buttons for the main menu, so if you want to play in a world press F.
+
+
+If you want to run the client:
+
+```
+gradlew runClient
+```
+
+And build the game:
+
+```
+gradlew build
+```
+
+
+Starting the game requires a username argument, something like this:
+
+```
+java -jar (jarLocation) --username Dev
+```

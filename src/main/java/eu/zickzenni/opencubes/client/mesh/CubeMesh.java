@@ -3,8 +3,7 @@ package eu.zickzenni.opencubes.client.mesh;
 import eu.zickzenni.opencubes.block.Block;
 import eu.zickzenni.opencubes.block.BlockSide;
 import eu.zickzenni.opencubes.block.Blocks;
-import eu.zickzenni.opencubes.client.engine.mesh.Face;
-import eu.zickzenni.opencubes.client.engine.texture.TextureManager;
+import eu.zickzenni.opencubes.client.texture.TextureManager;
 import org.joml.Vector2f;
 
 public final class CubeMesh {
@@ -131,17 +130,19 @@ public final class CubeMesh {
         );
     }
 
+
     private static Vector2f getUVPosition(int id, BlockSide side) {
         Block block = Blocks.getBlock(id);
         if (block == null) {
             return new Vector2f(-TextureManager.TEXTURE_SIZE, -TextureManager.TEXTURE_SIZE);
         }
-        if (block.getTexture().isSingleTexture()) {
-            return TextureManager.getPosition(block.getTexture().getSingleAtlasPosition());
+        if (block.isUsingFullTexture()) {
+            return TextureManager.getPosition(block.getFullTexture());
         }
-        if (!block.getTexture().getAtlasPositions().containsKey(side)) {
-            return new Vector2f(-TextureManager.TEXTURE_SIZE, -TextureManager.TEXTURE_SIZE);
-        }
-        return TextureManager.getPosition(block.getTexture().getAtlasPositions().get(side));
+        return switch (side) {
+            case TOP -> TextureManager.getPosition(block.getTopTexture());
+            case BOTTOM -> TextureManager.getPosition(block.getBottomTexture());
+            case FRONT, BACK, LEFT, RIGHT -> TextureManager.getPosition(block.getSideTexture());
+        };
     }
 }

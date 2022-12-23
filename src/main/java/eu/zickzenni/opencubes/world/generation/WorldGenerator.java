@@ -1,6 +1,6 @@
 package eu.zickzenni.opencubes.world.generation;
 
-import eu.zickzenni.opencubes.world.Chunk;
+import eu.zickzenni.opencubes.world.chunk.Chunk;
 
 public abstract class WorldGenerator {
     private int seed;
@@ -9,7 +9,11 @@ public abstract class WorldGenerator {
         this.seed = seed;
     }
 
-    public abstract void generate(Chunk chunk);
+    public void generate(Chunk chunk) {
+        onGenerate(chunk);
+    }
+
+    public abstract void onGenerate(Chunk chunk);
 
     public int getSeed() {
         return seed;

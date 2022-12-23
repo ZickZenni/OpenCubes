@@ -3,8 +3,8 @@ package eu.zickzenni.opencubes.block;
 import org.joml.Vector3f;
 
 public class GrassBlock extends Block {
-    public GrassBlock(int id, BlockTexture texture) {
-        super(id, texture);
+    public GrassBlock(int id, String name) {
+        super(id, name, BlockSound.GRASS, false);
     }
 
     @Override

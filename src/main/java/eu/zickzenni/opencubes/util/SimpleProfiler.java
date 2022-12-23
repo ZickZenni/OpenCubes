@@ -9,8 +9,9 @@ public class SimpleProfiler {
         profiles.put(name, System.currentTimeMillis());
     }
 
-    public static void stop(String name) {
-        System.out.println("[SimpleProfiler] " + name + " took: " + (System.currentTimeMillis() - profiles.get(name)) + "ms!");
+    public static long stop(String name) {
+        long time = System.currentTimeMillis() - profiles.get(name);
         profiles.remove(name);
+        return time;
     }
 }

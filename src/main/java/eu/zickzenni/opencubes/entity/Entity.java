@@ -1,14 +1,15 @@
 package eu.zickzenni.opencubes.entity;
 
-import eu.zickzenni.opencubes.world.Chunk;
-import eu.zickzenni.opencubes.world.ChunkPosition;
 import eu.zickzenni.opencubes.world.Dimension;
+import eu.zickzenni.opencubes.world.chunk.Chunk;
+import eu.zickzenni.opencubes.world.chunk.ChunkPosition;
+import org.joml.Math;
 import org.joml.Vector3f;
 
 public class Entity {
     private final int id;
-    private final Vector3f position;
-    private final Vector3f rotation;
+    protected Vector3f position;
+    protected Vector3f rotation;
     private Dimension dimension;
 
     public Entity(int id, Dimension dimension) {
@@ -27,7 +28,7 @@ public class Entity {
         return new Vector3f(0, chunk.raycastY(0, 0, 255,  0), 0);
     }
 
-    public void update(float interval) {
+    public void update() {
     }
 
     public Vector3f getPosition() {
@@ -42,12 +43,12 @@ public class Entity {
 
     public void movePosition(float offsetX, float offsetY, float offsetZ) {
         if (offsetZ != 0) {
-            position.x += (float) Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
-            position.z += (float) Math.cos(Math.toRadians(rotation.y)) * offsetZ;
+            position.x += Math.sin(Math.toRadians(rotation.y)) * -1.0f * offsetZ;
+            position.z += Math.cos(Math.toRadians(rotation.y)) * offsetZ;
         }
         if (offsetX != 0) {
-            position.x += (float) Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
-            position.z += (float) Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
+            position.x += Math.sin(Math.toRadians(rotation.y - 90)) * -1.0f * offsetX;
+            position.z += Math.cos(Math.toRadians(rotation.y - 90)) * offsetX;
         }
         position.y += offsetY;
     }
@@ -70,5 +71,9 @@ public class Entity {
         rotation.x += offsetX;
         rotation.y += offsetY;
         rotation.z += offsetZ;
+    }
+
+    public int getId() {
+        return id;
     }
 }
