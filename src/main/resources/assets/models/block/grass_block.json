@@ -1,6 +1,11 @@
 {
   "parent": "block/cube_all",
   "textures": {
-    "all": "blocks/bedrock"
+    "all": "block/grass_block_top",
+    "left": "block/grass_block_side",
+    "right": "block/grass_block_side",
+    "front": "block/grass_block_side",
+    "back": "block/grass_block_side",
+    "bottom": "block/dirt"
   }
 }

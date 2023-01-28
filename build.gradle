@@ -41,7 +41,7 @@ dependencies {
 
     jar {
         manifest {
-            attributes "Main-Class": "eu.zickzenni.opencubes.client.OpenCubes"
+            attributes "Main-Class": "Main"
         }
         duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from {
@@ -55,5 +55,5 @@ task runClient(type: JavaExec) {
     description = "Run the client"
     classpath = sourceSets.main.runtimeClasspath
     args("--username", "Dev")
-    main = "eu.zickzenni.opencubes.client.OpenCubes"
+    main = "Main"
 }
