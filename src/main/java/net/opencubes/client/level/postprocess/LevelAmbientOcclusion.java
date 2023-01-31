@@ -1,6 +1,7 @@
 package net.opencubes.client.level.postprocess;
 
 import net.opencubes.block.BlockSide;
+import net.opencubes.world.level.chunk.ChunkBlock;
 import net.opencubes.world.level.chunk.LevelChunk;
 
 public final class LevelAmbientOcclusion {
@@ -17,91 +18,98 @@ public final class LevelAmbientOcclusion {
         float[] ao = getDefaultAmbientOcclusion();
         switch (side) {
             case TOP -> {
-                if (chunk.getBlockAt(x - 1, y + 1, z) != null || chunk.getBlockAt(x - 1, y + 1, z - 1) != null || chunk.getBlockAt(x, y + 1, z - 1) != null) {
+                if (getBlockAt(chunk, x - 1, y + 1, z) != null || getBlockAt(chunk, x - 1, y + 1, z - 1) != null || getBlockAt(chunk, x, y + 1, z - 1) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y + 1, z) != null || chunk.getBlockAt(x + 1, y + 1, z - 1) != null || chunk.getBlockAt(x, y + 1, z - 1) != null) {
+                if (getBlockAt(chunk, x + 1, y + 1, z) != null || getBlockAt(chunk, x + 1, y + 1, z - 1) != null || getBlockAt(chunk, x, y + 1, z - 1) != null) {
                     ao[1] -= strength;
                 }
-                if (chunk.getBlockAt(x - 1, y + 1, z) != null || chunk.getBlockAt(x - 1, y + 1, z + 1) != null || chunk.getBlockAt(x, y + 1, z + 1) != null) {
+                if (getBlockAt(chunk, x - 1, y + 1, z) != null || getBlockAt(chunk, x - 1, y + 1, z + 1) != null || getBlockAt(chunk, x, y + 1, z + 1) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y + 1, z) != null || chunk.getBlockAt(x + 1, y + 1, z + 1) != null || chunk.getBlockAt(x, y + 1, z + 1) != null) {
+                if (getBlockAt(chunk, x + 1, y + 1, z) != null || getBlockAt(chunk, x + 1, y + 1, z + 1) != null || getBlockAt(chunk, x, y + 1, z + 1) != null) {
                     ao[3] -= strength;
                 }
             }
             case BOTTOM -> {
-                if (chunk.getBlockAt(x - 1, y - 1, z) != null || chunk.getBlockAt(x - 1, y - 1, z - 1) != null || chunk.getBlockAt(x, y - 1, z - 1) != null) {
+                if (getBlockAt(chunk, x - 1, y - 1, z) != null || getBlockAt(chunk, x - 1, y - 1, z - 1) != null || getBlockAt(chunk, x, y - 1, z - 1) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y - 1, z) != null || chunk.getBlockAt(x + 1, y - 1, z - 1) != null || chunk.getBlockAt(x, y - 1, z - 1) != null) {
+                if (getBlockAt(chunk, x + 1, y - 1, z) != null || getBlockAt(chunk, x + 1, y - 1, z - 1) != null || getBlockAt(chunk, x, y - 1, z - 1) != null) {
                     ao[1] -= strength;
                 }
-                if (chunk.getBlockAt(x - 1, y - 1, z) != null || chunk.getBlockAt(x - 1, y - 1, z + 1) != null || chunk.getBlockAt(x, y - 1, z + 1) != null) {
+                if (getBlockAt(chunk, x - 1, y - 1, z) != null || getBlockAt(chunk, x - 1, y - 1, z + 1) != null || getBlockAt(chunk, x, y - 1, z + 1) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y - 1, z) != null || chunk.getBlockAt(x + 1, y - 1, z + 1) != null || chunk.getBlockAt(x, y - 1, z + 1) != null) {
+                if (getBlockAt(chunk, x + 1, y - 1, z) != null || getBlockAt(chunk, x + 1, y - 1, z + 1) != null || getBlockAt(chunk, x, y - 1, z + 1) != null) {
                     ao[3] -= strength;
                 }
             }
             case FRONT -> {
-                if (chunk.getBlockAt(x, y + 1, z + 1) != null) {
+                if (getBlockAt(chunk, x, y + 1, z + 1) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x, y - 1, z + 1) != null) {
+                if (getBlockAt(chunk, x, y - 1, z + 1) != null) {
                     ao[1] -= strength;
                 }
-                if (chunk.getBlockAt(x, y - 1, z + 1) != null) {
+                if (getBlockAt(chunk, x, y - 1, z + 1) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x, y + 1, z + 1) != null) {
+                if (getBlockAt(chunk, x, y + 1, z + 1) != null) {
                     ao[3] -= strength;
                 }
             }
             case BACK -> {
-                if (chunk.getBlockAt(x, y + 1, z - 1) != null) {
+                if (getBlockAt(chunk, x, y + 1, z - 1) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x, y - 1, z - 1) != null) {
+                if (getBlockAt(chunk, x, y - 1, z - 1) != null) {
                     ao[3] -= strength;
                 }
-                if (chunk.getBlockAt(x, y - 1, z - 1) != null) {
+                if (getBlockAt(chunk, x, y - 1, z - 1) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x, y + 1, z - 1) != null) {
+                if (getBlockAt(chunk, x, y + 1, z - 1) != null) {
                     ao[1] -= strength;
                 }
             }
             case LEFT -> {
-                if (chunk.getBlockAt(x - 1, y + 1, z) != null) {
+                if (getBlockAt(chunk, x - 1, y + 1, z) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x - 1, y - 1, z) != null) {
+                if (getBlockAt(chunk, x - 1, y - 1, z) != null) {
                     ao[1] -= strength;
                 }
-                if (chunk.getBlockAt(x - 1, y - 1, z) != null) {
+                if (getBlockAt(chunk, x - 1, y - 1, z) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x - 1, y + 1, z) != null) {
+                if (getBlockAt(chunk, x - 1, y + 1, z) != null) {
                     ao[3] -= strength;
                 }
             }
             case RIGHT -> {
-                if (chunk.getBlockAt(x + 1, y + 1, z) != null) {
+                if (getBlockAt(chunk, x + 1, y + 1, z) != null) {
                     ao[0] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y - 1, z) != null) {
+                if (getBlockAt(chunk, x + 1, y - 1, z) != null) {
                     ao[1] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y - 1, z) != null) {
+                if (getBlockAt(chunk, x + 1, y - 1, z) != null) {
                     ao[2] -= strength;
                 }
-                if (chunk.getBlockAt(x + 1, y + 1, z) != null) {
+                if (getBlockAt(chunk, x + 1, y + 1, z) != null) {
                     ao[3] -= strength;
                 }
             }
         }
         return ao;
+    }
+
+    private static ChunkBlock getBlockAt(LevelChunk chunk, int x, int y, int z) {
+        if (!chunk.inChunk(x,y,z)) {
+            return chunk.getLevel().getBlock(chunk.getChunkPos().x() * 16 + x, y, chunk.getChunkPos().z() * 16 + z);
+        }
+        return chunk.getBlockAt(x,y,z);
     }
 
     public static float[] getDefaultAmbientOcclusion() {
