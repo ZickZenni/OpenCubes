@@ -3,10 +3,8 @@ package net.opencubes.client.renderer;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
 import net.opencubes.client.renderer.texture.Texture;
-import net.opencubes.client.shader.DefaultShader;
-import net.opencubes.client.shader.RectShader;
-import net.opencubes.client.shader.SelectionShader;
 import net.opencubes.client.shader.Shader;
+import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.client.vertex.Mesh;
 import net.opencubes.client.vertex.Model;
@@ -24,19 +22,10 @@ public class GameRenderer {
     private final LevelRenderer levelRenderer;
     private Texture boundTexture;
 
-    public static DefaultShader DEFAULT_SHADER;
-    public static RectShader RECT_SHADER;
-    public static SelectionShader SELECTION_SHADER;
+    private int vertexCount = 0;
 
     public GameRenderer(OpenCubes openCubes) {
         this.levelRenderer = new LevelRenderer(openCubes);
-        try {
-            DEFAULT_SHADER = new DefaultShader();
-            RECT_SHADER = new RectShader();
-            SELECTION_SHADER = new SelectionShader();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -57,6 +46,8 @@ public class GameRenderer {
             RenderSystem.activateTexture(RenderSystem.TEXTURE_BANK_0);
             boundTexture.bind();
         }
+
+        vertexCount += model.getMesh().getVertexCount();
 
         Matrix4f projectionMatrix = RenderSystem.updateProjection();
         shader.setUniform("projectionMatrix", projectionMatrix);
@@ -93,6 +84,8 @@ public class GameRenderer {
             RenderSystem.activateTexture(RenderSystem.TEXTURE_BANK_0);
             boundTexture.bind();
         }
+
+        vertexCount += model.getMesh().getVertexCount();
 
         // Update projection Matrix
         Matrix4f projectionMatrix = RenderSystem.updateOrthographicProjection();
@@ -135,7 +128,7 @@ public class GameRenderer {
 
         Mesh mesh = builder.build();
         Model model = new Model(mesh, 1.02f, new Vec3(x + 0.5f, y, z + 0.5f));
-        renderModel(camera, model, SELECTION_SHADER);
+        renderModel(camera, model, ShaderManager.getShader("selection"));
         model.getMesh().cleanup();
     }
 
@@ -166,5 +159,13 @@ public class GameRenderer {
 
     public Texture getBoundTexture() {
         return boundTexture;
+    }
+
+    public int getVertexCount() {
+        return vertexCount;
+    }
+
+    public void resetVertexCount() {
+        vertexCount = 0;
     }
 }

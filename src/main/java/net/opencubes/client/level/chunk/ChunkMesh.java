@@ -15,22 +15,22 @@ import net.opencubes.world.level.chunk.LevelChunk;
 import net.opencubes.world.level.lighting.LevelLightingEngine;
 import net.opencubes.world.physics.Vec3;
 
-/*
- TODO: Rewrite to support Ambient Occlusion
- */
+import java.util.HashMap;
+import java.util.Map;
+
 public class ChunkMesh {
     private final LevelChunk chunk;
 
-    private Model opaqueModel;
-    private Model transparentModel;
+    private HashMap<String, Model> opaqueModels = new HashMap<>();
+    private HashMap<String, Model> transparentModels = new HashMap<>();
 
     public ChunkMesh(LevelChunk chunk) {
         this.chunk = chunk;
     }
 
     public void computeMeshes() {
-        MeshBuilder opaqueMeshBuilder = new MeshBuilder();
-        MeshBuilder transparentMeshBuilder = new MeshBuilder();
+        HashMap<String, MeshBuilder> opaqueBuilders = new HashMap<>();
+        HashMap<String, MeshBuilder> transparentBuilders = new HashMap<>();
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
@@ -39,7 +39,20 @@ public class ChunkMesh {
                         continue;
                     ChunkBlock chunkBlock = chunk.getBlockAt(x, y, z);
                     Block block = BlockRegistry.getBlock(chunkBlock.getBlockName());
-                    generateMesh(block.isTransparent() ? transparentMeshBuilder : opaqueMeshBuilder, x, y, z);
+                    MeshBuilder builder = new MeshBuilder();
+                    if (block.isTransparent()) {
+                        if (transparentBuilders.containsKey(block.shader())) {
+                            builder = transparentBuilders.get(block.shader());
+                        }
+                        generateMesh(builder, x, y, z);
+                        transparentBuilders.put(block.shader(), builder);
+                    } else {
+                        if (opaqueBuilders.containsKey(block.shader())) {
+                            builder = opaqueBuilders.get(block.shader());
+                        }
+                        generateMesh(builder, x, y, z);
+                        opaqueBuilders.put(block.shader(), builder);
+                    }
                 }
             }
         }
@@ -47,23 +60,23 @@ public class ChunkMesh {
         destroyMeshes();
 
         Vec3 modelPosition = new Vec3(chunk.getChunkPos().x() * 16 + 0.5f, 0, chunk.getChunkPos().z() * 16 + 0.5f);
-        if (opaqueMeshBuilder.getFaces().size() > 0) {
-            this.opaqueModel = new Model(opaqueMeshBuilder.build(), 1, modelPosition);
+        for (Map.Entry<String, MeshBuilder> entry : opaqueBuilders.entrySet()) {
+            opaqueModels.put(entry.getKey(), new Model(entry.getValue().build(), 1, modelPosition));
         }
-        if (transparentMeshBuilder.getFaces().size() > 0) {
-            this.transparentModel = new Model(transparentMeshBuilder.build(), 1, modelPosition);
+        for (Map.Entry<String, MeshBuilder> entry : transparentBuilders.entrySet()) {
+            transparentModels.put(entry.getKey(), new Model(entry.getValue().build(), 1, modelPosition));
         }
     }
 
     public void destroyMeshes() {
-        if (opaqueModel != null && opaqueModel.getMesh() != null) {
-            opaqueModel.getMesh().cleanup();
-            opaqueModel = null;
+        for (Map.Entry<String, Model> entry : opaqueModels.entrySet()) {
+            entry.getValue().getMesh().cleanup();
         }
-        if (transparentModel != null && transparentModel.getMesh() != null) {
-            transparentModel.getMesh().cleanup();
-            transparentModel = null;
+        for (Map.Entry<String, Model> entry : transparentModels.entrySet()) {
+            entry.getValue().getMesh().cleanup();
         }
+        opaqueModels.clear();
+        transparentModels.clear();
     }
 
     private void generateMesh(MeshBuilder meshBuilder, int x, int y, int z) {
@@ -226,12 +239,12 @@ public class ChunkMesh {
         };
     }
 
-    public Model getOpaqueModel() {
-        return opaqueModel;
+    public HashMap<String, Model> getOpaqueModels() {
+        return opaqueModels;
     }
 
-    public Model getTransparentModel() {
-        return transparentModel;
+    public HashMap<String, Model> getTransparentModels() {
+        return transparentModels;
     }
 
     public LevelChunk getChunk() {

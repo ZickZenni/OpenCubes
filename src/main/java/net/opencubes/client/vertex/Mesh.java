@@ -52,7 +52,7 @@ public class Mesh {
         this.vertices = ConverterHelper.convertFloat(pos);
         this.textCoords = ConverterHelper.convertFloat(tex);
         this.indices = ConverterHelper.convertInt(ind);
-        this.vertexCount = this.indices.length;
+        this.vertexCount = vertices.length;
         this.colors = ConverterHelper.convertFloat(col);
         create();
     }
@@ -61,7 +61,7 @@ public class Mesh {
         this.vertices = vertices;
         this.textCoords = textCoords;
         this.indices = indices;
-        this.vertexCount = this.indices.length;
+        this.vertexCount = vertices.length;
         this.colors = colors;
         create();
     }

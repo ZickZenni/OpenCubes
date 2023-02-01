@@ -116,6 +116,10 @@ public final class LevelAmbientOcclusion {
         return new float[]{1, 1, 1, 1};
     }
 
+    public static void setEnabled(boolean state) {
+        enabled = state;
+    }
+
     public static boolean isEnabled() {
         return enabled;
     }

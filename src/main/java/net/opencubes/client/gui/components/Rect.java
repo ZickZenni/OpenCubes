@@ -1,8 +1,8 @@
 package net.opencubes.client.gui.components;
 
 import net.opencubes.client.OpenCubes;
-import net.opencubes.client.renderer.GameRenderer;
 import net.opencubes.client.shader.Shader;
+import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.client.vertex.Face;
 import net.opencubes.client.vertex.Mesh;
@@ -35,7 +35,7 @@ public final class Rect {
 
         Model model = new Model(new Mesh(face), 1, new Vec3(x, y + height, z));
 
-        Shader shader = GameRenderer.RECT_SHADER;
+        Shader shader = ShaderManager.getShader("rect");
         shader.bind();
         shader.setUniform("blit", OpenCubes.getInstance().gameRenderer.getBoundTexture() != null ? 1 : 0);
         shader.setUniform("texture_sampler", 0);

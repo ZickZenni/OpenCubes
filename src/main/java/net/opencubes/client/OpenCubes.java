@@ -5,15 +5,20 @@ import net.opencubes.block.BlockRegistry;
 import net.opencubes.client.audio.SoundManager;
 import net.opencubes.client.block.model.BlockModelManager;
 import net.opencubes.client.gui.components.Rect;
+import net.opencubes.client.gui.components.font.Font;
+import net.opencubes.client.gui.components.font.FontRenderer;
 import net.opencubes.client.gui.screens.Screen;
+import net.opencubes.client.level.postprocess.LevelAmbientOcclusion;
 import net.opencubes.client.platform.Window;
 import net.opencubes.client.renderer.GameRenderer;
 import net.opencubes.client.renderer.texture.TextureAtlas;
+import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.entity.player.LocalPlayer;
 import net.opencubes.network.User;
 import net.opencubes.world.level.Level;
 import net.opencubes.world.physics.Vec3;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.UUID;
 
@@ -36,7 +41,9 @@ public class OpenCubes {
     @Nullable
     private Level level;
 
-    public TextureAtlas atlas;
+    private Font font;
+
+    public final TextureAtlas atlas;
 
     public OpenCubes() {
         instance = this;
@@ -45,10 +52,15 @@ public class OpenCubes {
         this.window = new Window("OpenCubes", true, false);
         this.soundManager = new SoundManager();
 
+        ShaderManager.init();
         BlockRegistry.init();
         BlockModelManager.loadModels();
 
         this.atlas = new TextureAtlas();
+
+        this.font = new Font("/assets/textures/gui/font.png");
+        FontRenderer.init(font);
+
         this.gameRenderer = new GameRenderer(this);
 
         loadWorld("world");
@@ -113,6 +125,11 @@ public class OpenCubes {
             window.getMouseInput().setCursorLocked(false);
         }
 
+        if (window.getKeyboardInput().isKeyPressed(GLFW.GLFW_KEY_F6)) {
+            LevelAmbientOcclusion.setEnabled(!LevelAmbientOcclusion.isEnabled());
+            gameRenderer.getLevelRenderer().regenerateChunks();
+        }
+
         if (window.isResize()) {
             RenderSystem.setViewport(window.getWidth(), window.getHeight());
             if (screen != null) {
@@ -142,6 +159,8 @@ public class OpenCubes {
         if (screen != null) {
             screen.render((int) window.getMouseInput().getCurrentPos().x, (int) window.getMouseInput().getCurrentPos().y, deltaTime);
         }
+
+        gameRenderer.resetVertexCount();
     }
 
     private void tick() {

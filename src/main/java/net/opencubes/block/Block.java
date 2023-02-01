@@ -46,6 +46,10 @@ public class Block {
         return false;
     }
 
+    public String shader() {
+        return "default";
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
