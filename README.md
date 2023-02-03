@@ -4,6 +4,18 @@
 
 A voxel rpg game, that tries to look a bit like Hytale
 
+## Screenshots
+
+These are currently screenshots from the game (Game footage not final; graphics and features subject to change)
+
+Currently i use textures from a resource pack called [Excalibur](https://www.curseforge.com/minecraft/texture-packs/excalibur "Excalibur: Curse Forge"). At some time i will create self made textures.
+
+[<img src="docs/images/gameplay1.png" width="720">]()
+
+[<img src="docs/images/gameplay2.png" width="720">]()
+
+[<img src="docs/images/gameplay3.png" width="720">]()
+
 ## Versions
 
 I am currently working only on one version: Java

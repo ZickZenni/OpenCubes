@@ -3,7 +3,6 @@ package net.opencubes.client.renderer;
 import com.beust.jcommander.internal.Nullable;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
-import net.opencubes.client.gui.components.font.FontRenderer;
 import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.client.vertex.Model;
@@ -68,9 +67,6 @@ public class LevelRenderer {
             RenderSystem.enableCull();
             openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
         }
-
-        FontRenderer.drawString("FPS: " + openCubes.getFps(), 10, 10, 0xFFFFFF);
-        FontRenderer.drawString("Vertices: " + openCubes.gameRenderer.getVertexCount(), 10, 36, 0xFFFFFF);
     }
 
     private void renderSky(Camera camera) {
