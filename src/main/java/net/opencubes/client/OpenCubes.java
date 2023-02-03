@@ -4,6 +4,7 @@ import com.beust.jcommander.internal.Nullable;
 import net.opencubes.block.BlockRegistry;
 import net.opencubes.client.audio.SoundManager;
 import net.opencubes.client.block.model.BlockModelManager;
+import net.opencubes.client.gui.IngameGui;
 import net.opencubes.client.gui.components.Rect;
 import net.opencubes.client.gui.components.font.Font;
 import net.opencubes.client.gui.components.font.FontRenderer;
@@ -15,6 +16,7 @@ import net.opencubes.client.renderer.texture.TextureAtlas;
 import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.entity.player.LocalPlayer;
+import net.opencubes.item.ItemRegistry;
 import net.opencubes.network.User;
 import net.opencubes.world.level.Level;
 import net.opencubes.world.physics.Vec3;
@@ -41,6 +43,8 @@ public class OpenCubes {
     @Nullable
     private Level level;
 
+    private IngameGui ingameGui;
+
     private Font font;
 
     public final TextureAtlas atlas;
@@ -56,16 +60,19 @@ public class OpenCubes {
         BlockRegistry.init();
         BlockModelManager.loadModels();
 
+        ItemRegistry.init();
+
         this.atlas = new TextureAtlas();
 
         this.font = new Font("/assets/textures/gui/font.png");
         FontRenderer.init(font);
 
         this.gameRenderer = new GameRenderer(this);
-
-        loadWorld("world");
+        this.ingameGui = new IngameGui();
 
         this.running = true;
+
+        loadWorld("world");
     }
 
     public void run() {
@@ -155,6 +162,7 @@ public class OpenCubes {
         if (level != null && player != null)  {
             gameRenderer.getLevelRenderer().setLevel(level);
             gameRenderer.renderLevel();
+            ingameGui.render((int) window.getMouseInput().getCurrentPos().x, (int) window.getMouseInput().getCurrentPos().y, deltaTime);
         }
         if (screen != null) {
             screen.render((int) window.getMouseInput().getCurrentPos().x, (int) window.getMouseInput().getCurrentPos().y, deltaTime);

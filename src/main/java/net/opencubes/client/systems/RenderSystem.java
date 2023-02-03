@@ -118,11 +118,19 @@ public final class RenderSystem {
     }
 
     public static void disableDepthTest() {
-        enable(GL11.GL_DEPTH_TEST);
+        disable(GL11.GL_DEPTH_TEST);
     }
 
     public static void enableCull() {
         enable(GL11.GL_CULL_FACE);
+    }
+
+    public static void setCullFront() {
+        GL11.glCullFace(GL11.GL_FRONT);
+    }
+
+    public static void setCullBack() {
+        GL11.glCullFace(GL11.GL_BACK);
     }
 
     public static void disableCull() {
@@ -142,7 +150,7 @@ public final class RenderSystem {
     }
 
     public static void disableMSAA() {
-        enable(GL30.GL_MULTISAMPLE);
+        disable(GL30.GL_MULTISAMPLE);
     }
 
     private static void enable(int target) {

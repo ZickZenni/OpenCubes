@@ -1,8 +1,11 @@
 package net.opencubes.entity.player;
 
+import net.opencubes.block.BlockSide;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
 import net.opencubes.client.platform.Window;
+import net.opencubes.inventory.ItemStack;
+import net.opencubes.inventory.PlayerInventory;
 import net.opencubes.util.Ray;
 import net.opencubes.world.level.Level;
 import net.opencubes.world.level.chunk.ChunkBlock;
@@ -12,6 +15,7 @@ import org.lwjgl.glfw.GLFW;
 
 public class LocalPlayer extends Player {
     public GameMode gameMode;
+    private PlayerInventory inventory = new PlayerInventory();
 
     public LocalPlayer(int id, Vec3 position, float yaw, float pitch) {
         super(id, position, yaw, pitch);
@@ -21,6 +25,8 @@ public class LocalPlayer extends Player {
     public ChunkBlock selectedBlock;
 
     public void update(float dt) {
+        updateInventory();
+
         Window window = OpenCubes.getInstance().getWindow();
         Camera mainCamera = OpenCubes.getInstance().gameRenderer.getMainCamera();
         Level level = OpenCubes.getInstance().getLevel();
@@ -35,39 +41,32 @@ public class LocalPlayer extends Player {
             selectedBlock = level.getBlock(x, y, z);
             if (selectedBlock != null) {
                 // Block Break
-
-
                 if (window.getMouseInput().isLeftButtonPressed()) {
                     level.breakBlock(x, y, z);
                 }
 
-                /*
                 // Item Interact
-                if (window.getMouseInput().isRightButtonPressed() && screen == null) {
-                    //PlayerEntity player = OpenCubes.getInstance().getPlayer();
-                    //PlayerInventory inventory = player.getInventory();
-                    //ItemStack itemStack = inventory.getItemStack(27 + inventory.getHotbarSlot());
+                if (window.getMouseInput().isRightButtonPressed() && OpenCubes.getInstance().getScreen() == null) {
+                    ItemStack itemStack = inventory.getItemStack(27 + inventory.getHotbarSlot());
                     if (itemStack != null) {
                         float rX = rayPosition.x - x - 0.5f;
                         float rY = rayPosition.y - y - 0.5f;
                         float rZ = rayPosition.z - z - 0.5f;
                         if (rZ > 0.495f && rZ > rY) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.BACK);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.BACK);
                         } else if (rZ < -0.495 && rZ < rY) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.FRONT);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.FRONT);
                         } else if (rX > 0.495f && rX > rY) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.RIGHT);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.RIGHT);
                         } else if (rX < -0.495f && rX < rY) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.LEFT);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.LEFT);
                         } else if (rY > 0.495f) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.TOP);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.TOP);
                         } else if (rY < -0.495f) {
-                            itemStack.getItem().onBlockInteract(dimension, x, y, z, BlockSide.BOTTOM);
+                            itemStack.getItem().onBlockInteract(level, x, y, z, BlockSide.BOTTOM);
                         }
                     }
-                }*/
-
-                //RenderSystem.renderSelectionBox(dimension, x, y, z);
+                }
                 break;
             }
         }
@@ -113,7 +112,22 @@ public class LocalPlayer extends Player {
         }
     }
 
+    private void updateInventory() {
+        if (OpenCubes.getInstance().getScreen() == null) {
+            int one = 49;
+            for (int i = 0; i < 9; i++) {
+                if (OpenCubes.getInstance().getWindow().getKeyboardInput().isKeyPressed(one + i)) {
+                    OpenCubes.getInstance().player.getInventory().setHotbarSlot(i);
+                }
+            }
+        }
+    }
+
     private int floor(float a) {
         return (int) java.lang.Math.floor(a);
+    }
+
+    public PlayerInventory getInventory() {
+        return inventory;
     }
 }

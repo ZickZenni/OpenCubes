@@ -18,6 +18,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Level {
+    private static final int MESH_GENERATION_PER_FRAME = 3;
+    private int generations = 0;
+
     public final LevelLightingEngine lightingEngine;
     protected final HashMap<ChunkPos, LevelChunk> chunks;
 
@@ -28,6 +31,7 @@ public class Level {
     public Level() {
         this.chunks = new HashMap<>();
         this.lightingEngine = new LevelLightingEngine(this);
+        LevelGenerationSystem.start(this);
     }
 
     private ArrayList<ChunkPos> chunksToRemove = new ArrayList<>();
@@ -43,7 +47,7 @@ public class Level {
                     ChunkPos position = new ChunkPos(x, z);
                     if (!chunks.containsKey(position)) {
                         try {
-                            this.generateChunk(position);
+                            LevelGenerationSystem.addChunk(position);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -70,11 +74,12 @@ public class Level {
 
             for (ChunkPos position : chunksToRemove) {
                 LevelChunk chunk = getChunk(position);
-                chunk.destroy();
+                if (chunk != null) {
+                    chunk.destroy();
+                }
                 chunks.remove(position);
             }
         }
-
         Iterator<Map.Entry<ChunkPos, LevelChunk>> it = chunks.entrySet().iterator();
         try {
             while (it.hasNext()) {
@@ -90,6 +95,28 @@ public class Level {
             e.printStackTrace();
         }
         tickEntities();
+        LevelGenerationSystem.tick();
+    }
+
+    public void tickFrame() {
+        generations = 0;
+        Iterator<Map.Entry<ChunkPos, LevelChunk>> it = chunks.entrySet().iterator();
+        try {
+            while (it.hasNext()) {
+                Map.Entry<ChunkPos, LevelChunk> pair = it.next();
+                LevelChunk chunk = pair.getValue();
+                if (chunk.isLoaded()) {
+                    if (chunk.shouldGenerateMesh()) {
+                        if (generations < MESH_GENERATION_PER_FRAME) {
+                            chunk.tickMesh();
+                            generations++;
+                        }
+                    }
+                }
+            }
+        } catch (ConcurrentModificationException ignored) {
+
+        }
     }
 
     public void generateChunk(ChunkPos position) {
@@ -100,9 +127,9 @@ public class Level {
 
         generateTerrain(chunk);
 
-        this.lightingEngine.computeChunk(chunk);
+        //this.lightingEngine.computeChunk(chunk);
         chunk.setGenerateMesh();
-        updateNeighbours(chunk.getChunkPos());
+        updateNeighbors(chunk.getChunkPos());
     }
 
     private void generateTerrain(LevelChunk chunk) {
@@ -137,32 +164,59 @@ public class Level {
                 OpenCubes.getInstance().getSoundManager().playSound(block.getSound().getRandomDigSound());
             }
         }
-
         setBlock(x, y, z, null);
-        ChunkPos position = toChunkPosition(x, z);
-        updateNeighbours(position);
     }
 
-    private void updateNeighbours(ChunkPos position) {
-        ChunkPos xN = new ChunkPos(position.x() - 1, position.z());
-        LevelChunk neighbor = getChunk(xN);
-        if (neighbor != null) {
-            neighbor.setGenerateMesh();
+    public void placeBlock(int x, int y, int z, Block block) {
+        setBlock(x,y,z, block);
+        if (block.getSound() != BlockSound.NONE) {
+            OpenCubes.getInstance().getSoundManager().playSound(block.getSound().getRandomDigSound());
         }
-        ChunkPos xP = new ChunkPos(position.x() + 1, position.z());
-        neighbor = getChunk(xP);
-        if (neighbor != null) {
-            neighbor.setGenerateMesh();
+    }
+
+    private void updateNeighbors(ChunkPos position) {
+        for (int x = -1; x < 1; x++) {
+            updateChunk(new ChunkPos(position.x() + x, position.z() + 1));
         }
-        ChunkPos zN = new ChunkPos(position.x(), position.z() - 1);
-        neighbor = getChunk(zN);
-        if (neighbor != null) {
-            neighbor.setGenerateMesh();
+        for (int x = -1; x < 1; x++) {
+            updateChunk(new ChunkPos(position.x() + x, position.z() - 1));
         }
-        ChunkPos zP = new ChunkPos(position.x(), position.z() + 1);
-        neighbor = getChunk(zP);
-        if (neighbor != null) {
-            neighbor.setGenerateMesh();
+        updateChunk(new ChunkPos(position.x() + 1, position.z()));
+        updateChunk(new ChunkPos(position.x() - 1, position.z()));
+    }
+
+    private void updateNeighbors(int x, int y, int z) {
+        ChunkPos position = toChunkPosition(x, z);
+        LevelChunk chunk = getChunk(position);
+        if (chunk == null)
+            return;
+
+        Vector2i blockPos = toLocalBlockPosition(x, z);
+        if (blockPos.x == 15) {
+            updateChunk(new ChunkPos(position.x() + 1, position.z()));
+        } else if (blockPos.x == 0) {
+            updateChunk(new ChunkPos(position.x() - 1, position.z()));
+        }
+        if (blockPos.y == 15) {
+            updateChunk(new ChunkPos(position.x(), position.z() + 1));
+        } else if (blockPos.y == 0) {
+            updateChunk(new ChunkPos(position.x(), position.z() - 1));
+        }
+        if (blockPos.x == 15 && blockPos.y == 15) {
+            updateChunk(new ChunkPos(position.x() + 1, position.z() + 1));
+        } else if (blockPos.x == 0 && blockPos.y == 0) {
+            updateChunk(new ChunkPos(position.x() - 1, position.z() - 1));
+        } else if (blockPos.x == 15 && blockPos.y == 0) {
+            updateChunk(new ChunkPos(position.x() + 1, position.z() - 1));
+        } else if (blockPos.x == 0 && blockPos.y == 15) {
+            updateChunk(new ChunkPos(position.x() - 1, position.z() + 1));
+        }
+    }
+
+    private void updateChunk(ChunkPos pos) {
+        LevelChunk chunk = getChunk(pos);
+        if (chunk != null)  {
+            chunk.setGenerateMesh();
         }
     }
 
@@ -207,6 +261,7 @@ public class Level {
         Vector2i blockPos = toLocalBlockPosition(x, z);
         chunk.setBlockAt(blockPos.x, y, blockPos.y, block);
         chunk.setGenerateMesh();
+        updateNeighbors(x,y,z);
     }
 
     protected ChunkPos toChunkPosition(int x, int z) {

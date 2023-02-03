@@ -17,7 +17,7 @@ import net.opencubes.world.physics.Vec3;
 import java.util.Map;
 
 public class LevelRenderer {
-    public static int renderDistance = 4;
+    public static int renderDistance = 8;
 
     private final OpenCubes openCubes;
     @Nullable
@@ -34,6 +34,8 @@ public class LevelRenderer {
         if (level == null)
             return;
         renderSky(camera);
+
+        level.tickFrame();
 
         try {
             LocalPlayer player = OpenCubes.getInstance().player;
@@ -67,7 +69,8 @@ public class LevelRenderer {
             openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
         }
 
-        FontRenderer.drawString("Vertices: " + openCubes.gameRenderer.getVertexCount(), 10, 10, 0xFFFFFF);
+        FontRenderer.drawString("FPS: " + openCubes.getFps(), 10, 10, 0xFFFFFF);
+        FontRenderer.drawString("Vertices: " + openCubes.gameRenderer.getVertexCount(), 10, 36, 0xFFFFFF);
     }
 
     private void renderSky(Camera camera) {

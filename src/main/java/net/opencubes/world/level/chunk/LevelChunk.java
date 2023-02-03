@@ -27,6 +27,10 @@ public class LevelChunk {
     }
 
     public void tick() {
+
+    }
+
+    public void tickMesh() {
         if (this.shouldGenerateMesh) {
             this.level.lightingEngine.computeChunk(this);
             this.mesh.computeMeshes();
@@ -103,9 +107,13 @@ public class LevelChunk {
         this.shouldGenerateMesh = true;
     }
 
+    public boolean shouldGenerateMesh() {
+        return shouldGenerateMesh;
+    }
+
     public void destroy() {
-        blocks = new ChunkBlock[0][0][0];
-        lightLevels = new byte[0][0][0];
+        blocks = null;
+        lightLevels = null;
         destroyed = true;
     }
 

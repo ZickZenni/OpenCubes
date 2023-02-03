@@ -22,6 +22,13 @@ public class Model {
         this.rotation = new Vec3(0,0,0);
     }
 
+    public Model(Mesh mesh, float scale, Vec3 position, Vec3 rotation) {
+        this.mesh = mesh;
+        this.position = position;
+        this.scale = scale;
+        this.rotation = rotation;
+    }
+
     public Vec3 getPosition() {
         return position;
     }

@@ -6,7 +6,6 @@ import net.opencubes.client.block.model.BlockModelTexture;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -86,13 +85,6 @@ public class TextureAtlas {
         atlas.setRGB(atlasSize - 2, atlasSize - 1, 0xFF000000);
         atlas.setRGB(atlasSize - 1, atlasSize - 2, 0xFF000000);
         atlas.setRGB(atlasSize - 3, atlasSize - 1, 0xFFFFFFFF);
-
-        File outputfile = new File("image.png");
-        try {
-            ImageIO.write(atlas, "png", outputfile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         texture = new Texture(atlas);
     }
 
