@@ -11,7 +11,7 @@ I am currently working only on one version: Java
 Sometime later i will bring a better version using C++
 
 ## Java
-I currently use **Java 17**, a more recent version than what Minecraft Alpha uses.
+I currently use **Java 17**.
 
 It's currently **work in progress**, so there will be many bugs and probably lags. Reporting them will be really helpful
 
@@ -23,8 +23,7 @@ Open build.gradle as a project and you can start working instantly.
 
 ### Building and Running
 
-Currently there is no buttons for the main menu, so if you want to play in a world press F.
-
+Currently there is no main menu, starting it just throws you directly into the world.
 
 If you want to run the client:
 
