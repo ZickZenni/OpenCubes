@@ -24,6 +24,8 @@ public class LevelRenderer {
 
     private final Model skyModel;
 
+    public boolean showChunkBorders = false;
+
     public LevelRenderer(OpenCubes openCubes) {
         this.openCubes = openCubes;
         this.skyModel = new Model(CubeMesh.createCubeMesh(null, 64 / 255f, 132 / 255f, 255 / 255f, 1, 300, 1, 300, false), 1, new Vec3(0, 0, 0));
@@ -54,6 +56,26 @@ public class LevelRenderer {
                         }
                     }
                 }
+            }
+
+            if (showChunkBorders) {
+                RenderSystem.enableCull();
+                RenderSystem.disableBlend();
+                RenderSystem.disableDepthTest();
+                RenderSystem.enableWireframe();
+                for (int x = plrChunkX - renderDistance; x < plrChunkX + renderDistance; x++) {
+                    for (int z = plrChunkZ - renderDistance; z < plrChunkZ + renderDistance; z++) {
+                        ChunkPos position = new ChunkPos(x, z);
+                        LevelChunk chunk = level.getChunk(position);
+                        if (chunk != null) {
+                            Model model = new Model(CubeMesh.createCubeMesh("", 1, 1, 1, 1, 16, 256, 16, false));
+                            model.setPosition(chunk.getChunkPos().x() * 16, 128, chunk.getChunkPos().z() * 16);
+                            openCubes.gameRenderer.renderModel(camera, model, ShaderManager.getShader("default"));
+                            model.getMesh().cleanup();
+                        }
+                    }
+                }
+                RenderSystem.disableWireframe();
             }
         } catch (Exception ignore) {
         }

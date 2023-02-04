@@ -1,4 +1,4 @@
-package net.opencubes.client.gui.components;
+package net.opencubes.client.renderer;
 
 import net.opencubes.client.OpenCubes;
 import net.opencubes.client.shader.ShaderManager;
@@ -25,6 +25,8 @@ public class ItemRenderer {
             OpenCubes.getInstance().gameRenderer.renderModelOrthographic(new Model(mesh, 1, new Vec3(x + size, y - size - 4, 100), new Vec3(32f, 45f, 0f)), ShaderManager.getShader("default"));
 
             RenderSystem.setCullBack();
+
+            mesh.cleanup();
         }
     }
 }

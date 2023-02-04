@@ -97,7 +97,7 @@ public class LocalPlayer extends Player {
         }
         float speed = 1 / 5f;
         if (OpenCubes.getInstance().getWindow().getKeyboardInput().isKeyHold(GLFW.GLFW_KEY_LEFT_CONTROL)) {
-            speed = 1;
+            speed = 3;
         }
 
         Vec3 force = new Vec3(0, 0, 0);

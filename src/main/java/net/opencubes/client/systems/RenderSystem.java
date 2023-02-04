@@ -125,6 +125,14 @@ public final class RenderSystem {
         enable(GL11.GL_CULL_FACE);
     }
 
+    public static void enableWireframe() {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE);
+    }
+
+    public static void disableWireframe() {
+        GL11.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL);
+    }
+
     public static void setCullFront() {
         GL11.glCullFace(GL11.GL_FRONT);
     }

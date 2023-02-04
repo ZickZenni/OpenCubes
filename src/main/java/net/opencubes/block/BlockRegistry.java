@@ -14,6 +14,8 @@ public class BlockRegistry {
     public static final Block STONE = registerBlock(new Block("stone", BlockSound.STONE));
     public static final Block DIRT = registerBlock(new Block("dirt", BlockSound.GRAVEL));
     public static final Block GRASS_BLOCK = registerBlock(new GrassBlock("grass_block", BlockSound.GRASS));
+    public static final Block SNOW_BLOCK = registerBlock(new Block("snow_block", BlockSound.SNOW));
+    public static final Block SAND = registerBlock(new Block("sand", BlockSound.SAND));
     public static final Block COBBLESTONE = registerBlock(new Block("cobblestone", BlockSound.STONE));
     public static final Block OAK_LOG = registerBlock(new Block("oak_log", BlockSound.WOOD));
     public static final Block OAK_WOOD = registerBlock(new Block("oak_wood", BlockSound.WOOD));

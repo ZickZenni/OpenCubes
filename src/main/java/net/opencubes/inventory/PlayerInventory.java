@@ -11,6 +11,7 @@ public class PlayerInventory extends Inventory {
         setItemStack(27, new ItemStack(ItemRegistry.STONE));
         setItemStack(28, new ItemStack(ItemRegistry.GRASS_BLOCK));
         setItemStack(29, new ItemStack(ItemRegistry.DIRT));
+        setItemStack(30, new ItemStack(ItemRegistry.SNOW_BLOCK));
     }
 
     public int getHotbarSlot() {

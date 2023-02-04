@@ -12,6 +12,7 @@ public class BlockSound {
     public static final BlockSound GRAVEL = new BlockSound("gravel", 4, 4);
     public static final BlockSound STONE = new BlockSound("stone", 4, 6);
     public static final BlockSound SAND = new BlockSound("sand", 4, 5);
+    public static final BlockSound SNOW = new BlockSound("snow", 4, 4);
     public static final BlockSound WOOD = new BlockSound("wood", 4, 6);
 
     private final String fileName;

@@ -11,6 +11,7 @@ public final class ItemRegistry {
     public static final Item STONE = registerItem(new BlockItem(1, BlockRegistry.STONE));
     public static final Item GRASS_BLOCK = registerItem(new BlockItem(2, BlockRegistry.GRASS_BLOCK));
     public static final Item DIRT = registerItem(new BlockItem(3, BlockRegistry.DIRT));
+    public static final Item SNOW_BLOCK = registerItem(new BlockItem(4, BlockRegistry.SNOW_BLOCK));
 
     public static void init() {
     }

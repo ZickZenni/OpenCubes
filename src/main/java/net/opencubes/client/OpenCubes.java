@@ -5,12 +5,12 @@ import net.opencubes.block.BlockRegistry;
 import net.opencubes.client.audio.SoundManager;
 import net.opencubes.client.block.model.BlockModelManager;
 import net.opencubes.client.gui.IngameGui;
+import net.opencubes.client.gui.components.Font;
 import net.opencubes.client.gui.components.Rect;
-import net.opencubes.client.gui.components.font.Font;
-import net.opencubes.client.gui.components.font.FontRenderer;
 import net.opencubes.client.gui.screens.Screen;
 import net.opencubes.client.level.postprocess.LevelAmbientOcclusion;
 import net.opencubes.client.platform.Window;
+import net.opencubes.client.renderer.FontRenderer;
 import net.opencubes.client.renderer.GameRenderer;
 import net.opencubes.client.renderer.texture.TextureAtlas;
 import net.opencubes.client.shader.ShaderManager;
@@ -59,7 +59,6 @@ public class OpenCubes {
         ShaderManager.init();
         BlockRegistry.init();
         BlockModelManager.loadModels();
-
         ItemRegistry.init();
 
         this.atlas = new TextureAtlas();

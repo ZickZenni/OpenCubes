@@ -1,4 +1,4 @@
-package net.opencubes.client.gui.components.font;
+package net.opencubes.client.gui.components;
 
 import net.opencubes.client.renderer.texture.Texture;
 

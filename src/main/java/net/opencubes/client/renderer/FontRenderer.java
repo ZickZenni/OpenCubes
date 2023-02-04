@@ -1,6 +1,7 @@
-package net.opencubes.client.gui.components.font;
+package net.opencubes.client.renderer;
 
 import net.opencubes.client.OpenCubes;
+import net.opencubes.client.gui.components.Font;
 import net.opencubes.client.gui.components.Rect;
 import net.opencubes.client.renderer.texture.Texture;
 import net.opencubes.client.systems.RenderSystem;

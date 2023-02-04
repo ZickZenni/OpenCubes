@@ -1,10 +1,10 @@
 package net.opencubes.client.gui;
 
 import net.opencubes.client.OpenCubes;
-import net.opencubes.client.gui.components.ItemRenderer;
 import net.opencubes.client.gui.components.Rect;
 import net.opencubes.client.gui.components.Widget;
-import net.opencubes.client.gui.components.font.FontRenderer;
+import net.opencubes.client.renderer.FontRenderer;
+import net.opencubes.client.renderer.ItemRenderer;
 import net.opencubes.client.renderer.texture.Texture;
 import net.opencubes.entity.player.LocalPlayer;
 import net.opencubes.inventory.ItemStack;
@@ -42,6 +42,7 @@ public class IngameGui implements Widget {
         Rect.drawRect(x, height - HOTBAR_HEIGHT, HOTBAR_HEIGHT, HOTBAR_HEIGHT, 0, 22 / 256f, 24 / 256f, 24 / 256f, 0xFFFFFFFF);
 
         FontRenderer.drawString("FPS: " + OpenCubes.getInstance().getFps(), 10, 10, 0xFFFFFF);
-        FontRenderer.drawString("Vertices: " + OpenCubes.getInstance().gameRenderer.getVertexCount(), 10, 36, 0xFFFFFF);
+        FontRenderer.drawString("Position: " + OpenCubes.getInstance().player.getPosition(), 10, 36, 0xFFFFFF);
+        FontRenderer.drawString("Vertices: " + OpenCubes.getInstance().gameRenderer.getVertexCount(), 10, 62, 0xFFFFFF);
     }
 }

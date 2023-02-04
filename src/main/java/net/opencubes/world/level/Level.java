@@ -7,7 +7,7 @@ import net.opencubes.client.OpenCubes;
 import net.opencubes.client.renderer.LevelRenderer;
 import net.opencubes.entity.Entity;
 import net.opencubes.entity.player.LocalPlayer;
-import net.opencubes.util.FastNoiseLite;
+import net.opencubes.world.level.biome.BiomeManager;
 import net.opencubes.world.level.chunk.ChunkBlock;
 import net.opencubes.world.level.chunk.LevelChunk;
 import net.opencubes.world.level.lighting.LevelLightingEngine;
@@ -18,19 +18,22 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class Level {
-    private static final int MESH_GENERATION_PER_FRAME = 3;
+    private static final int MESH_GENERATION_PER_FRAME = 2;
+
+    private final int seed;
     private int generations = 0;
 
     public final LevelLightingEngine lightingEngine;
     protected final HashMap<ChunkPos, LevelChunk> chunks;
 
-    private final FastNoiseLite noise = new FastNoiseLite();
-
     protected final ArrayList<Entity> entities = new ArrayList<>();
+    private final BiomeManager biomeManager;
 
     public Level() {
+        this.seed = 836323;
         this.chunks = new HashMap<>();
         this.lightingEngine = new LevelLightingEngine(this);
+        this.biomeManager = new BiomeManager(this);
         LevelGenerationSystem.start(this);
     }
 
@@ -124,29 +127,11 @@ public class Level {
             return;
         }
         LevelChunk chunk = addChunk(position);
+        biomeManager.generate(chunk);
 
-        generateTerrain(chunk);
-
-        //this.lightingEngine.computeChunk(chunk);
+        this.lightingEngine.computeChunk(chunk);
         chunk.setGenerateMesh();
         updateNeighbors(chunk.getChunkPos());
-    }
-
-    private void generateTerrain(LevelChunk chunk) {
-        ChunkPos position = chunk.getChunkPos();
-        for (int xB = 0; xB < 16; xB++) {
-            for (int zB = 0; zB < 16; zB++) {
-                int height = (int) (noise.GetNoise(xB + position.x() * 16, zB + position.z() * 16) * 10) + 70;
-                chunk.setBlockAt(xB, height, zB, BlockRegistry.GRASS_BLOCK);
-                for (int y = height - 1; y > 0; y--) {
-                    if (y >= height - 4) {
-                        chunk.setBlockAt(xB, y, zB, BlockRegistry.DIRT);
-                    } else {
-                        chunk.setBlockAt(xB, y, zB, BlockRegistry.STONE);
-                    }
-                }
-            }
-        }
     }
 
     protected void tickEntities() {
@@ -278,5 +263,9 @@ public class Level {
 
     public Map<ChunkPos, LevelChunk> getChunks() {
         return Collections.unmodifiableMap(chunks);
+    }
+
+    public int getSeed() {
+        return seed;
     }
 }
