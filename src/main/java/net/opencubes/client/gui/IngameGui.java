@@ -6,8 +6,13 @@ import net.opencubes.client.gui.components.Widget;
 import net.opencubes.client.renderer.FontRenderer;
 import net.opencubes.client.renderer.ItemRenderer;
 import net.opencubes.client.renderer.texture.Texture;
+import net.opencubes.client.shader.ShaderManager;
+import net.opencubes.client.systems.RenderSystem;
+import net.opencubes.client.vertex.Mesh;
+import net.opencubes.client.vertex.Model;
 import net.opencubes.entity.player.LocalPlayer;
 import net.opencubes.inventory.ItemStack;
+import net.opencubes.world.physics.Vec3;
 
 public class IngameGui implements Widget {
     public static final Texture GUI = new Texture("/assets/textures/gui/widgets.png", true);
@@ -22,6 +27,36 @@ public class IngameGui implements Widget {
             return;
         }
 
+        renderViewModel();
+        renderHud();
+    }
+
+    private void renderViewModel() {
+        LocalPlayer player = OpenCubes.getInstance().player;
+        int width = OpenCubes.getInstance().getWindow().getWidth();
+        int height = OpenCubes.getInstance().getWindow().getHeight();
+
+        if (player.getInventory().getItemStack(27 + player.getInventory().getHotbarSlot()) != null) {
+            final float size = 500;
+            Mesh mesh = player.getInventory().getItemStack(27 + player.getInventory().getHotbarSlot()).getItem().get3DModel(size);
+            if (mesh != null) {
+                RenderSystem.disableBlend();
+                RenderSystem.enableCull();
+                RenderSystem.setCullFront();
+                RenderSystem.disableDepthTest();
+
+                OpenCubes.getInstance().gameRenderer.bindTexture(OpenCubes.getInstance().atlas.getTexture());
+                OpenCubes.getInstance().gameRenderer.renderModelOrthographic(new Model(mesh, 1, new Vec3(width - 210, height - 100 - 4, 100), new Vec3(28, -40, 0f)), ShaderManager.getShader("default"));
+
+                RenderSystem.setCullBack();
+
+                mesh.cleanup();
+            }
+        }
+    }
+
+    private void renderHud() {
+        LocalPlayer player = OpenCubes.getInstance().player;
         int width = OpenCubes.getInstance().getWindow().getWidth();
         int height = OpenCubes.getInstance().getWindow().getHeight();
 
@@ -42,7 +77,7 @@ public class IngameGui implements Widget {
         Rect.drawRect(x, height - HOTBAR_HEIGHT, HOTBAR_HEIGHT, HOTBAR_HEIGHT, 0, 22 / 256f, 24 / 256f, 24 / 256f, 0xFFFFFFFF);
 
         FontRenderer.drawString("FPS: " + OpenCubes.getInstance().getFps(), 10, 10, 0xFFFFFF);
-        FontRenderer.drawString("Position: " + OpenCubes.getInstance().player.getPosition(), 10, 36, 0xFFFFFF);
-        FontRenderer.drawString("Vertices: " + OpenCubes.getInstance().gameRenderer.getVertexCount(), 10, 62, 0xFFFFFF);
+        //FontRenderer.drawString("Position: " + OpenCubes.getInstance().player.getPosition(), 10, 36, 0xFFFFFF);
+        //FontRenderer.drawString("Vertices: " + OpenCubes.getInstance().gameRenderer.getVertexCount(), 10, 62, 0xFFFFFF);
     }
 }
