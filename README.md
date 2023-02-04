@@ -10,11 +10,11 @@ These are currently screenshots from the game (Game footage not final; graphics 
 
 Currently i use textures from a resource pack called [Excalibur](https://www.curseforge.com/minecraft/texture-packs/excalibur "Excalibur: Curse Forge"). At some time i will create self made textures.
 
-[<img src="docs/images/gameplay1.png" width="720">]()
+[<img src="docs/images/screenshot1.png" width="720">]()
 
-[<img src="docs/images/gameplay2.png" width="720">]()
+[<img src="docs/images/screenshot2.png" width="720">]()
 
-[<img src="docs/images/gameplay3.png" width="720">]()
+[<img src="docs/images/screenshot3.png" width="720">]()
 
 ## Versions
 
