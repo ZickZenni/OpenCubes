@@ -1,6 +1,8 @@
 package net.opencubes.client.renderer;
 
 import com.beust.jcommander.internal.Nullable;
+import net.opencubes.block.Block;
+import net.opencubes.block.BlockRegistry;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
 import net.opencubes.client.shader.ShaderManager;
@@ -13,6 +15,7 @@ import net.opencubes.world.level.Level;
 import net.opencubes.world.level.chunk.LevelChunk;
 import net.opencubes.world.physics.Vec3;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class LevelRenderer {
@@ -39,6 +42,8 @@ public class LevelRenderer {
         level.tickFrame();
 
         try {
+            ArrayList<LevelChunk> chunks = new ArrayList<>();
+
             LocalPlayer player = OpenCubes.getInstance().player;
             int plrChunkX = (int) player.getPosition().x / 16;
             int plrChunkZ = (int) player.getPosition().z / 16;
@@ -47,14 +52,39 @@ public class LevelRenderer {
                     ChunkPos position = new ChunkPos(x, z);
                     LevelChunk chunk = level.getChunk(position);
                     if (chunk != null) {
-                        RenderSystem.disableBlend();
-                        RenderSystem.enableDepthTest();
-                        RenderSystem.enableCull();
-                        openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
-                        for (Map.Entry<String, Model> entry : chunk.getMesh().getOpaqueModels().entrySet()) {
-                            openCubes.gameRenderer.renderModel(camera, entry.getValue(), ShaderManager.getShader(entry.getKey()));
-                        }
+                        chunks.add(chunk);
                     }
+                }
+            }
+
+            chunks.sort((o1, o2) -> {
+                double o1Distance = o1.getDistance(openCubes.gameRenderer.getMainCamera().getPosition());
+                double o2Distance = o2.getDistance(openCubes.gameRenderer.getMainCamera().getPosition());
+                if (o1Distance == o2Distance) {
+                    return 0;
+                }
+
+                return o1Distance < o2Distance ? -1 : 1;
+            });
+
+            for (LevelChunk chunk : chunks) {
+                RenderSystem.disableBlend();
+                RenderSystem.enableDepthTest();
+                RenderSystem.enableCull();
+                for (Map.Entry<String, Model> entry : chunk.getMesh().getOpaqueModels().entrySet()) {
+                    openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
+                    openCubes.gameRenderer.renderModel(camera, entry.getValue(), ShaderManager.getShader(entry.getKey()));
+                }
+            }
+
+            for (LevelChunk chunk : chunks) {
+                RenderSystem.enableBlend();
+                RenderSystem.enableDepthTest();
+                RenderSystem.enableCull();
+                for (Map.Entry<String, Model> entry : chunk.getMesh().getTransparentModels().entrySet()) {
+                    RenderSystem.enableBlend();
+                    openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
+                    openCubes.gameRenderer.renderModel(camera, entry.getValue(), ShaderManager.getShader(entry.getKey()));
                 }
             }
 
@@ -81,13 +111,16 @@ public class LevelRenderer {
         }
 
         if (openCubes.player.selectedBlock != null) {
-            int x = openCubes.player.selectedBlock.getAbsoluteX();
-            int y = openCubes.player.selectedBlock.getY();
-            int z = openCubes.player.selectedBlock.getAbsoluteZ();
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
-            RenderSystem.enableCull();
-            openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
+            Block block = BlockRegistry.getBlock(openCubes.player.selectedBlock.getBlockName());
+            if (block != null && !block.isFluid()) {
+                int x = openCubes.player.selectedBlock.getAbsoluteX();
+                int y = openCubes.player.selectedBlock.getY();
+                int z = openCubes.player.selectedBlock.getAbsoluteZ();
+                RenderSystem.enableBlend();
+                RenderSystem.enableDepthTest();
+                RenderSystem.enableCull();
+                openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
+            }
         }
     }
 

@@ -145,8 +145,13 @@ public class Level {
         ChunkBlock currentBlock = getBlock(x, y, z);
         if (currentBlock != null) {
             Block block = BlockRegistry.getBlock(currentBlock.getBlockName());
-            if (block.getSound() != BlockSound.NONE) {
-                OpenCubes.getInstance().getSoundManager().playSound(block.getSound().getRandomDigSound());
+            if (block != null) {
+                if (block.isFluid()) {
+                    return;
+                }
+                if (block.getSound() != BlockSound.NONE) {
+                    OpenCubes.getInstance().getSoundManager().playSound(block.getSound().getRandomDigSound());
+                }
             }
         }
         setBlock(x, y, z, null);
@@ -227,12 +232,21 @@ public class Level {
         return chunks.getOrDefault(chunkPos, null);
     }
 
+    public byte getLightLevel(int x, int y, int z) {
+        ChunkPos position = toChunkPosition(x, z);
+        LevelChunk chunk = getChunk(position);
+        if (chunk == null)
+            return 0;
+
+        Vector2i blockPos = toLocalBlockPosition(x, z);
+        return chunk.getLightLevel(blockPos.x, y, blockPos.y);
+    }
+
     public ChunkBlock getBlock(int x, int y, int z) {
         ChunkPos position = toChunkPosition(x, z);
         LevelChunk chunk = getChunk(position);
         if (chunk == null)
             return null;
-
         Vector2i blockPos = toLocalBlockPosition(x, z);
         return chunk.getBlockAt(blockPos.x, y, blockPos.y);
     }

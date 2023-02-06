@@ -1,19 +1,32 @@
 package net.opencubes.world.level;
 
-import java.util.Objects;
+public class ChunkPos {
+    private final int x;
+    private final int z;
 
-public record ChunkPos(int x, int z) {
+    public ChunkPos(int x, int z) {
+        this.x = x;
+        this.z = z;
+    }
+
+    public int x() {
+        return x;
+    }
+
+    public int z() {
+        return z;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ChunkPos chunkPos = (ChunkPos) o;
-        return x == chunkPos.x && z == chunkPos.z;
+        ChunkPos pos = (ChunkPos) o;
+        return x == pos.x && z == pos.z;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, z);
+        return x * 31 + z;
     }
 }

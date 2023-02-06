@@ -1,5 +1,7 @@
 package net.opencubes.client.shader;
 
+import net.opencubes.client.vertex.Model;
+import net.opencubes.world.physics.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
@@ -58,6 +60,14 @@ public class Shader {
         glUniform1f(uniforms.get(uniformName), value);
     }
 
+    public void setUniform(String uniformName, Vec3 value) {
+        glUniform3fv(uniforms.get(uniformName), new float[] {
+                value.x,
+                value.y,
+                value.z
+        });
+    }
+
     public void createVertexShader(String shaderCode) throws Exception {
         vertexShaderId = createShader(shaderCode, GL_VERTEX_SHADER);
     }
@@ -103,7 +113,7 @@ public class Shader {
         }
     }
 
-    public void bind() {
+    public void bind(Model model) {
         glUseProgram(programId);
         bound = true;
     }

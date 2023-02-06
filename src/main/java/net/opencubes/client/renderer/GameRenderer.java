@@ -40,7 +40,7 @@ public class GameRenderer {
         }
 
         if (!shader.isBound()) {
-            shader.bind();
+            shader.bind(model);
         }
         if (boundTexture != null) {
             RenderSystem.activateTexture(RenderSystem.TEXTURE_BANK_0);
@@ -78,7 +78,7 @@ public class GameRenderer {
         float height = OpenCubes.getInstance().getWindow().getHeight();
 
         if (!shader.isBound()) {
-            shader.bind();
+            shader.bind(model);
         }
         if (boundTexture != null) {
             RenderSystem.activateTexture(RenderSystem.TEXTURE_BANK_0);

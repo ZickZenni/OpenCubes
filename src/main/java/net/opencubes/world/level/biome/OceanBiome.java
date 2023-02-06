@@ -17,6 +17,12 @@ public class OceanBiome extends Biome {
 
     @Override
     public void generate(Level level, int x, int y, int z) {
+        for (int yW = 54; yW > y; yW--) {
+            if (level.getBlock(x, yW, z) == null) {
+                level.setBlock(x, yW, z, BlockRegistry.WATER);
+            }
+        }
+
         level.setBlock(x, y, z, BlockRegistry.SAND);
         for (int yD = y - 1; yD > 0; yD--) {
             if (yD >= y - 3) {

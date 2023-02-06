@@ -70,8 +70,8 @@ public final class RenderSystem {
     public static Matrix4f getModelMatrix(Model model) {
         Vec3 rotation = model.getRotation();
         modelViewMatrix.identity().translate(new Vector3f(model.getPosition().x, model.getPosition().y, model.getPosition().z)).
-                rotateX((float) Math.toRadians(-rotation.x)).
                 rotateY((float) Math.toRadians(-rotation.y)).
+                rotateX((float) Math.toRadians(-rotation.x)).
                 rotateZ((float) Math.toRadians(-rotation.z))
                 .scale(model.getScale());
         return modelViewMatrix;

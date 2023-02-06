@@ -1,5 +1,7 @@
 package net.opencubes.entity.player;
 
+import net.opencubes.block.Block;
+import net.opencubes.block.BlockRegistry;
 import net.opencubes.block.BlockSide;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
@@ -31,6 +33,8 @@ public class LocalPlayer extends Player {
         Camera mainCamera = OpenCubes.getInstance().gameRenderer.getMainCamera();
         Level level = OpenCubes.getInstance().getLevel();
 
+        ChunkBlock selectedBlock = null;
+
         // Block Selection
         Ray ray = new Ray(new Vec3(0, 0.5f, 0).add(mainCamera.getPosition()), new Vec3(mainCamera.getYaw(), mainCamera.getPitch(), 0), 3.58f, 1000);
         for (int i = 0; i < ray.getSteps(); i++) {
@@ -40,6 +44,13 @@ public class LocalPlayer extends Player {
             int z = floor(rayPosition.z);
             selectedBlock = level.getBlock(x, y, z);
             if (selectedBlock != null) {
+                Block block = BlockRegistry.getBlock(selectedBlock.getBlockName());
+                if (block != null) {
+                    if (block.isFluid()) {
+                        continue;
+                    }
+                }
+                this.selectedBlock = selectedBlock;
                 // Block Break
                 if (window.getMouseInput().isLeftButtonPressed()) {
                     level.breakBlock(x, y, z);
@@ -69,6 +80,10 @@ public class LocalPlayer extends Player {
                 }
                 break;
             }
+        }
+
+        if (selectedBlock == null) {
+            this.selectedBlock = null;
         }
     }
 

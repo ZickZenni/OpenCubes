@@ -12,6 +12,10 @@ public final class ItemRegistry {
     public static final Item GRASS_BLOCK = registerItem(new BlockItem(2, BlockRegistry.GRASS_BLOCK));
     public static final Item DIRT = registerItem(new BlockItem(3, BlockRegistry.DIRT));
     public static final Item SNOW_BLOCK = registerItem(new BlockItem(4, BlockRegistry.SNOW_BLOCK));
+    public static final Item SAND = registerItem(new BlockItem(5, BlockRegistry.SAND));
+    public static final Item COBBLESTONE = registerItem(new BlockItem(6, BlockRegistry.COBBLESTONE));
+    public static final Item OAK_LOG = registerItem(new BlockItem(7, BlockRegistry.OAK_LOG));
+    public static final Item BEDROCK = registerItem(new BlockItem(8, BlockRegistry.BEDROCK));
 
     public static void init() {
     }

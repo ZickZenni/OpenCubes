@@ -2,6 +2,7 @@ package net.opencubes.client;
 
 import net.opencubes.entity.Entity;
 import net.opencubes.world.physics.Vec3;
+import org.joml.Math;
 
 public class Camera {
     private Vec3 position = new Vec3(0,0,0);
@@ -15,6 +16,17 @@ public class Camera {
     public Camera(Entity entity, boolean detached) {
         this.entity = entity;
         this.detached = detached;
+    }
+
+    public Vec3 forward() {
+        float yaw = Math.toRadians(this.yaw);
+        float pitch = Math.toRadians(this.pitch + 90);
+
+        Vec3 rayPosition = new Vec3(0,0,0);
+        rayPosition.x = Math.cos(pitch) * Math.cos(yaw) * -1;
+        rayPosition.y = Math.sin(yaw) * -1;
+        rayPosition.z = Math.cos(yaw) * Math.sin(pitch) * -1;
+        return rayPosition;
     }
 
     public Entity getEntity() {

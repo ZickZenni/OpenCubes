@@ -36,7 +36,7 @@ public final class Rect {
         Model model = new Model(new Mesh(face), 1, new Vec3(x, y + height, z));
 
         Shader shader = ShaderManager.getShader("rect");
-        shader.bind();
+        shader.bind(model);
         shader.setUniform("blit", OpenCubes.getInstance().gameRenderer.getBoundTexture() != null ? 1 : 0);
         shader.setUniform("texture_sampler", 0);
 

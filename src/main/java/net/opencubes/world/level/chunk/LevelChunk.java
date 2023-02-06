@@ -4,16 +4,20 @@ import net.opencubes.block.Block;
 import net.opencubes.client.level.chunk.ChunkMesh;
 import net.opencubes.world.level.ChunkPos;
 import net.opencubes.world.level.Level;
+import net.opencubes.world.physics.Vec2;
+import net.opencubes.world.physics.Vec3;
 
 import java.util.Objects;
 
 public class LevelChunk {
     protected final Level level;
+
+    private final Vec2 centerPoint;
     private final ChunkPos chunkPos;
     private boolean loaded;
     private boolean destroyed;
 
-    private final ChunkMesh mesh;
+    private ChunkMesh mesh;
     private boolean shouldGenerateMesh;
 
     private ChunkBlock[][][] blocks = new ChunkBlock[16][256][16];
@@ -22,6 +26,7 @@ public class LevelChunk {
     public LevelChunk(Level level, ChunkPos chunkPos) {
         this.level = level;
         this.chunkPos = chunkPos;
+        this.centerPoint = new Vec2(chunkPos.x() + 8, chunkPos.z() + 8);
         this.loaded = true;
         this.mesh = new ChunkMesh(this);
     }
@@ -119,6 +124,15 @@ public class LevelChunk {
 
     public boolean isDestroyed() {
         return destroyed;
+    }
+
+    public double getDistance(Vec2 position) {
+        return position.distance(centerPoint);
+    }
+
+    public double getDistance(Vec3 position) {
+        Vec2 cPosition = new Vec2(position.x, position.z);
+        return cPosition.distance(centerPoint);
     }
 
     @Override

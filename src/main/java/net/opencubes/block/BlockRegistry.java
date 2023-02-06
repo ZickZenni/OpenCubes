@@ -18,8 +18,10 @@ public class BlockRegistry {
     public static final Block SAND = registerBlock(new Block("sand", BlockSound.SAND));
     public static final Block COBBLESTONE = registerBlock(new Block("cobblestone", BlockSound.STONE));
     public static final Block OAK_LOG = registerBlock(new Block("oak_log", BlockSound.WOOD));
-    public static final Block OAK_WOOD = registerBlock(new Block("oak_wood", BlockSound.WOOD));
+    //public static final Block OAK_WOOD = registerBlock(new Block("oak_wood", BlockSound.WOOD));
     public static final Block BEDROCK = registerBlock(new Block("bedrock", BlockSound.STONE));
+
+    public static final Block WATER = registerBlock(new FluidBlock("water", BlockSound.STONE));
 
     public static void init() {
     }
@@ -31,7 +33,8 @@ public class BlockRegistry {
     }
 
     public static Block getBlock(String name) {
-        for (Block block : blocks) {
+        for (int i = 0; i < blocks.size(); i++) {
+            Block block = blocks.get(i);
             if (block.getName().equals(name)) {
                 return block;
             }

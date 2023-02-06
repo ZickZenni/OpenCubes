@@ -46,6 +46,10 @@ public class Block {
         return false;
     }
 
+    public boolean isFluid() {
+        return false;
+    }
+
     public String shader() {
         return "default";
     }
