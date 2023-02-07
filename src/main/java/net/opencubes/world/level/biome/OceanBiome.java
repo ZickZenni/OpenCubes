@@ -5,6 +5,7 @@ import net.opencubes.util.FastNoiseLite;
 import net.opencubes.world.level.Level;
 
 public class OceanBiome extends Biome {
+    public static final int WATER_LEVEL = 55;
     private final FastNoiseLite noise;
     private final FastNoiseLite noiseHills;
 
@@ -17,7 +18,7 @@ public class OceanBiome extends Biome {
 
     @Override
     public void generate(Level level, int x, int y, int z) {
-        for (int yW = 54; yW > y; yW--) {
+        for (int yW = WATER_LEVEL; yW > y; yW--) {
             if (level.getBlock(x, yW, z) == null) {
                 level.setBlock(x, yW, z, BlockRegistry.WATER);
             }

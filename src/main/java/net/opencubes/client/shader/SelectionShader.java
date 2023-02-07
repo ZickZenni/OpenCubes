@@ -4,8 +4,8 @@ import net.opencubes.util.ResourceUtil;
 
 public class SelectionShader extends Shader {
     public SelectionShader() throws Exception {
-        super("selection");
-        createVertexShader(ResourceUtil.loadResource("/assets/shaders/selection.vert"));
+        super("selection", true);
+        createVertexShader(ResourceUtil.loadResource("/assets/shaders/default.vert"));
         createFragmentShader(ResourceUtil.loadResource("/assets/shaders/selection.frag"));
         link();
 

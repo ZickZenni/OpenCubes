@@ -158,6 +158,13 @@ public class Level {
     }
 
     public void placeBlock(int x, int y, int z, Block block) {
+        ChunkBlock currentBlock = getBlock(x,y,z);
+        if (currentBlock != null) {
+            Block curr = BlockRegistry.getBlock(currentBlock.getBlockName());
+            if (!curr.isFluid() && !curr.isSolid()) {
+                return;
+            }
+        }
         setBlock(x,y,z, block);
         if (block.getSound() != BlockSound.NONE) {
             OpenCubes.getInstance().getSoundManager().playSound(block.getSound().getRandomDigSound());

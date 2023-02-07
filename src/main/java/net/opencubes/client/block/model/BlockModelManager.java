@@ -39,7 +39,6 @@ public final class BlockModelManager {
                         textures.put(entry.getKey(), new BlockModelTexture(entry.getKey(), entry.getValue().getAsString()));
                     }
                 }
-
                 models.put(block.getName(), new BlockModel(textures));
 
                 LOGGER.info("Loaded block model!");

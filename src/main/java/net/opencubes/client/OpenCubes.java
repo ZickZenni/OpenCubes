@@ -174,6 +174,7 @@ public class OpenCubes {
         if (level != null) {
             level.tick();
         }
+        atlas.tick();
     }
 
     public void loadWorld(String name) {

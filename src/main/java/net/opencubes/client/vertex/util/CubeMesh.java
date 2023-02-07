@@ -9,7 +9,7 @@ import net.opencubes.client.block.model.BlockModelManager;
 import net.opencubes.client.block.model.BlockModelTexture;
 import net.opencubes.client.level.chunk.ChunkMesh;
 import net.opencubes.client.level.postprocess.LevelAmbientOcclusion;
-import net.opencubes.client.renderer.texture.AtlasPosition;
+import net.opencubes.client.renderer.texture.AtlasTexture;
 import net.opencubes.client.vertex.Face;
 import net.opencubes.client.vertex.Mesh;
 import net.opencubes.world.physics.Vec3;
@@ -187,6 +187,27 @@ public final class CubeMesh {
         return getUVFromAtlas("");
     }
 
+    public static AtlasTexture getTextureByBlock(String name, BlockSide side) {
+        if (name == null) {
+            return null;
+        }
+        Block block = BlockRegistry.getBlock(name);
+        if (block == null) {
+            return null;
+        }
+        BlockModel model = BlockModelManager.getModel(name);
+        if (model == null) {
+            return null;
+        }
+        HashMap<String, BlockModelTexture> textures = model.getTextures();
+        if (textures.containsKey(side.toString().toLowerCase())) {
+            return OpenCubes.getInstance().atlas.getTexture(textures.get(side.toString().toLowerCase()).texture());
+        }
+        if (textures.containsKey("all")) {
+            return OpenCubes.getInstance().atlas.getTexture(textures.get("all").texture());
+        }
+        return null;
+    }
 
     private static Vec4 getUVFromAtlas(String name) {
         int atlasSize = OpenCubes.getInstance().atlas.getTexture().getWidth();
@@ -197,16 +218,21 @@ public final class CubeMesh {
         if (name.length() == 0) {
             return new Vec4((atlasSize - 2) * pixelSize, (atlasSize - 2) * pixelSize, 2 * pixelSize, 2 * pixelSize);
         }
-        AtlasPosition position = OpenCubes.getInstance().atlas.getPosition(name);
-        if (position == null) {
+        AtlasTexture texture = OpenCubes.getInstance().atlas.getTexture(name);
+        if (texture == null) {
             return getUVFromAtlas("");
         }
 
-        float x = position.x() * pixelSize;
-        float y = position.y() * pixelSize;
-        float width = position.width() * pixelSize;
-        float height = position.height() * pixelSize;
+        float x = texture.getX() * pixelSize;
+        float y = texture.getY() * pixelSize;
+        float width = texture.getWidth() * pixelSize;
+        float height;
 
+        if (texture.isAnimated()) {
+            height = ((float) texture.getHeight() / texture.getFrameAmount()) * pixelSize;
+        } else {
+            height = texture.getHeight() * pixelSize;
+        }
         return new Vec4(x, y, width, height);
     }
 

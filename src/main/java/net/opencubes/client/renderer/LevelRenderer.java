@@ -5,6 +5,9 @@ import net.opencubes.block.Block;
 import net.opencubes.block.BlockRegistry;
 import net.opencubes.client.Camera;
 import net.opencubes.client.OpenCubes;
+import net.opencubes.client.level.chunk.ChunkMesh;
+import net.opencubes.client.renderer.texture.AtlasTexture;
+import net.opencubes.client.shader.Shader;
 import net.opencubes.client.shader.ShaderManager;
 import net.opencubes.client.systems.RenderSystem;
 import net.opencubes.client.vertex.Model;
@@ -13,6 +16,7 @@ import net.opencubes.entity.player.LocalPlayer;
 import net.opencubes.world.level.ChunkPos;
 import net.opencubes.world.level.Level;
 import net.opencubes.world.level.chunk.LevelChunk;
+import net.opencubes.world.physics.Vec2;
 import net.opencubes.world.physics.Vec3;
 
 import java.util.ArrayList;
@@ -21,17 +25,21 @@ import java.util.Map;
 public class LevelRenderer {
     public static int renderDistance = 8;
 
+    public static final String SHADER = "chunk";
+
     private final OpenCubes openCubes;
-    @Nullable
+    @org.jetbrains.annotations.Nullable
     private Level level;
 
     private final Model skyModel;
+    //private final Model sunModel;
 
     public boolean showChunkBorders = false;
 
     public LevelRenderer(OpenCubes openCubes) {
         this.openCubes = openCubes;
         this.skyModel = new Model(CubeMesh.createCubeMesh(null, 64 / 255f, 132 / 255f, 255 / 255f, 1, 300, 1, 300, false), 1, new Vec3(0, 0, 0));
+        //this.sunModel = new Model(CubeMesh.createCubeMesh("null", 1, 1, 1, 1, 300, 1, 300, false), 1, new Vec3(0, 0, 0));
     }
 
     public void renderLevel(Camera camera) {
@@ -71,9 +79,19 @@ public class LevelRenderer {
                 RenderSystem.disableBlend();
                 RenderSystem.enableDepthTest();
                 RenderSystem.enableCull();
-                for (Map.Entry<String, Model> entry : chunk.getMesh().getOpaqueModels().entrySet()) {
-                    openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
-                    openCubes.gameRenderer.renderModel(camera, entry.getValue(), ShaderManager.getShader(entry.getKey()));
+                renderChunk(chunk, false);
+            }
+
+            if (openCubes.player.selectedBlock != null) {
+                Block block = BlockRegistry.getBlock(openCubes.player.selectedBlock.getBlockName());
+                if (block != null && !block.isFluid()) {
+                    int x = openCubes.player.selectedBlock.getAbsoluteX();
+                    int y = openCubes.player.selectedBlock.getY();
+                    int z = openCubes.player.selectedBlock.getAbsoluteZ();
+                    RenderSystem.enableBlend();
+                    RenderSystem.enableDepthTest();
+                    RenderSystem.enableCull();
+                    openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
                 }
             }
 
@@ -81,11 +99,7 @@ public class LevelRenderer {
                 RenderSystem.enableBlend();
                 RenderSystem.enableDepthTest();
                 RenderSystem.enableCull();
-                for (Map.Entry<String, Model> entry : chunk.getMesh().getTransparentModels().entrySet()) {
-                    RenderSystem.enableBlend();
-                    openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
-                    openCubes.gameRenderer.renderModel(camera, entry.getValue(), ShaderManager.getShader(entry.getKey()));
-                }
+                renderChunk(chunk, true);
             }
 
             if (showChunkBorders) {
@@ -108,19 +122,7 @@ public class LevelRenderer {
                 RenderSystem.disableWireframe();
             }
         } catch (Exception ignore) {
-        }
-
-        if (openCubes.player.selectedBlock != null) {
-            Block block = BlockRegistry.getBlock(openCubes.player.selectedBlock.getBlockName());
-            if (block != null && !block.isFluid()) {
-                int x = openCubes.player.selectedBlock.getAbsoluteX();
-                int y = openCubes.player.selectedBlock.getY();
-                int z = openCubes.player.selectedBlock.getAbsoluteZ();
-                RenderSystem.enableBlend();
-                RenderSystem.enableDepthTest();
-                RenderSystem.enableCull();
-                openCubes.gameRenderer.renderSelectionBox(camera, level, x, y, z);
-            }
+            ignore.printStackTrace();
         }
     }
 
@@ -137,6 +139,32 @@ public class LevelRenderer {
         skyModel.setPosition(camera.getPosition().x, camera.getPosition().y >= 0 ? -100 : camera.getPosition().y - 100, camera.getPosition().z);
         openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
         openCubes.gameRenderer.renderModel(camera, skyModel, ShaderManager.getShader("default"));
+    }
+
+    private void renderChunk(LevelChunk chunk, boolean transparent) {
+        for (Map.Entry<String, ChunkMesh.ChunkModel> entry : (transparent ? chunk.getMesh().getTransparentModels() : chunk.getMesh().getOpaqueModels()).entrySet()) {
+            for (Map.Entry<String, Model> entry2 : entry.getValue().models.entrySet()) {
+                Model model = entry2.getValue();
+
+                openCubes.gameRenderer.bindTexture(openCubes.atlas.getTexture());
+                Shader shader = ShaderManager.getShader(entry.getKey());
+                shader.bind(model);
+                if (entry2.getKey().equals("all")) {
+                    shader.setUniform("texture_offset", new Vec2(0,0));
+                } else {
+                    AtlasTexture texture = openCubes.atlas.getTexture(entry2.getKey());
+                    if (texture != null) {
+                        int atlasHeight = openCubes.atlas.getTexture().getHeight();
+                        float pixelSize = 1f / atlasHeight;
+
+                        int frameSize = texture.getHeight() / texture.getFrameAmount();
+
+                        shader.setUniform("texture_offset", new Vec2(0,(frameSize * texture.getCurrentFrame()) * pixelSize));
+                    }
+                }
+                openCubes.gameRenderer.renderModel(openCubes.gameRenderer.getMainCamera(), model, shader);
+            }
+        }
     }
 
     public void setLevel(@Nullable Level level) {

@@ -15,6 +15,7 @@ public class SnowyPlainsBiome extends Biome {
 
     @Override
     public void generate(Level level, int x, int y, int z) {
+        handleOcean(level, x, y, z);
         level.setBlock(x, y, z, BlockRegistry.SNOW_BLOCK);
         for (int yD = y - 1; yD > 0; yD--) {
             if (yD >= y - 3) {

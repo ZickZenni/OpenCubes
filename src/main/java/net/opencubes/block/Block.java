@@ -51,7 +51,7 @@ public class Block {
     }
 
     public String shader() {
-        return "default";
+        return "chunk";
     }
 
     @Override

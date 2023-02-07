@@ -1,10 +1,12 @@
 package net.opencubes.client.shader;
 
 import net.opencubes.client.vertex.Model;
+import net.opencubes.world.physics.Vec2;
 import net.opencubes.world.physics.Vec3;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.joml.Matrix4f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.FloatBuffer;
@@ -16,6 +18,8 @@ import static org.lwjgl.opengl.GL20.*;
 public class Shader {
     private static final Logger logger = LogManager.getLogger("Shader");
 
+    private boolean useTime;
+
     private final int programId;
     private final String name;
     private int vertexShaderId;
@@ -25,6 +29,10 @@ public class Shader {
     private boolean bound;
 
     public Shader(String name) throws Exception {
+        this(name, false);
+    }
+
+    public Shader(String name, boolean useTime) throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
@@ -32,6 +40,7 @@ public class Shader {
         logger.info("Creating shader: " + name);
         this.name = name;
         uniforms = new HashMap<>();
+        this.useTime = useTime;
     }
 
     public void createUniform(String uniformName) throws Exception {
@@ -65,6 +74,13 @@ public class Shader {
                 value.x,
                 value.y,
                 value.z
+        });
+    }
+
+    public void setUniform(String uniformName, Vec2 value) {
+        glUniform2fv(uniforms.get(uniformName), new float[] {
+                value.x,
+                value.y,
         });
     }
 
@@ -111,11 +127,18 @@ public class Shader {
         if (glGetProgrami(programId, GL_VALIDATE_STATUS) == 0) {
             System.err.println("Warning validating Shader code: " + glGetProgramInfoLog(programId, 1024));
         }
+
+        if (useTime) {
+            createUniform("time");
+        }
     }
 
     public void bind(Model model) {
         glUseProgram(programId);
         bound = true;
+        if (useTime) {
+            setUniform("time", (float) GLFW.glfwGetTime());
+        }
     }
 
     public void unbind() {

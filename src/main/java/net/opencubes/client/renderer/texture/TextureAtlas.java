@@ -1,5 +1,9 @@
 package net.opencubes.client.renderer.texture;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.opencubes.client.block.model.BlockModel;
 import net.opencubes.client.block.model.BlockModelManager;
 import net.opencubes.client.block.model.BlockModelTexture;
@@ -8,13 +12,14 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TextureAtlas {
     private final Texture texture;
-    private HashMap<String, AtlasPosition> positions = new HashMap<>();
+    private HashMap<String, AtlasTexture> textures = new HashMap<>();
 
     public TextureAtlas() {
         HashMap<String, String> textures = new HashMap<>();
@@ -30,7 +35,7 @@ public class TextureAtlas {
 
         int pixels = 0;
 
-        HashMap<String, BufferedImage> bufferedImages = new HashMap<>();
+        HashMap<String, BufferedAtlasTexture> bufferedImages = new HashMap<>();
         for (Map.Entry<String, String> entry : textures.entrySet()) {
             String name = entry.getKey();
             String filePath = entry.getValue();
@@ -41,8 +46,9 @@ public class TextureAtlas {
                 }
                 BufferedImage image = ImageIO.read(stream);
                 pixels += image.getWidth() * image.getHeight();
-                bufferedImages.put(name, image);
-            } catch (IOException ignored) {}
+                bufferedImages.put(name, new BufferedAtlasTexture(filePath, image));
+            } catch (IOException ignored) {
+            }
         }
 
         int atlasSize = 512;
@@ -56,9 +62,11 @@ public class TextureAtlas {
 
         int highestY = 0;
 
-        for (Map.Entry<String, BufferedImage> entry : bufferedImages.entrySet()) {
+        for (Map.Entry<String, BufferedAtlasTexture> entry : bufferedImages.entrySet()) {
             String name = entry.getKey();
-            BufferedImage bufferedImage = entry.getValue();
+            BufferedAtlasTexture bufferedAtlasTexture = entry.getValue();
+            BufferedImage bufferedImage = bufferedAtlasTexture.image;
+
             if (bufferedImage.getHeight() > highestY) {
                 highestY = bufferedImage.getHeight();
             }
@@ -69,7 +77,31 @@ public class TextureAtlas {
                     }
                 }
 
-                positions.put(name, new AtlasPosition(x, y, bufferedImage.getWidth(), bufferedImage.getHeight()));
+                try {
+                    InputStream stream = TextureAtlas.class.getResourceAsStream(bufferedAtlasTexture.path + ".json");
+                    if (stream != null) {
+                        JsonElement json = JsonParser.parseReader(new InputStreamReader(stream));
+                        JsonObject object = json.getAsJsonObject();
+                        if (object.has("animation")) {
+                            JsonObject anim = object.get("animation").getAsJsonObject();
+                            if (anim.has("frametime") && anim.has("frames")) {
+                                int frameAmount = anim.get("frameamount").getAsInt();
+                                int frameTime = anim.get("frametime").getAsInt();
+                                JsonArray framesArray = anim.get("frames").getAsJsonArray();
+                                int[] frames = new int[framesArray.size()];
+                                for (int i = 0; i < framesArray.size(); i++) {
+                                    frames[i] = framesArray.get(i).getAsInt();
+                                }
+
+                                this.textures.put(name, new AtlasTexture(name, x, y, bufferedImage.getWidth(), bufferedImage.getHeight(), frameAmount, frameTime, frames));
+                            }
+                        }
+                    } else {
+                        this.textures.put(name, new AtlasTexture(name, x, y, bufferedImage.getWidth(), bufferedImage.getHeight()));
+                    }
+                } catch (Exception ignored) {
+                    this.textures.put(name, new AtlasTexture(name, x, y, bufferedImage.getWidth(), bufferedImage.getHeight()));
+                }
 
                 x += bufferedImage.getWidth();
                 if (x >= atlasSize) {
@@ -88,15 +120,24 @@ public class TextureAtlas {
         texture = new Texture(atlas);
     }
 
+    public void tick() {
+        for (Map.Entry<String, AtlasTexture> texture : textures.entrySet()) {
+            texture.getValue().tick();
+        }
+    }
+
     public Texture getTexture() {
         return texture;
     }
 
-    public AtlasPosition getPosition(String name) {
-        return positions.getOrDefault(name, null);
+    public AtlasTexture getTexture(String name) {
+        return textures.getOrDefault(name, null);
     }
 
-    public Map<String, AtlasPosition> getPositions() {
-        return Collections.unmodifiableMap(positions);
+    public Map<String, AtlasTexture> getTextures() {
+        return Collections.unmodifiableMap(textures);
+    }
+
+    record BufferedAtlasTexture(String path, BufferedImage image) {
     }
 }
