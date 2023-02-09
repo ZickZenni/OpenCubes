@@ -29,6 +29,10 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 ## Developement
 
+### Todo
+
+My current todo is available in the projects tab or [here](https://github.com/users/ZickZenni/projects/1 "OpenCubes: Project")
+
 ### IntelliJ
 
 Open build.gradle as a project and you can start working instantly.
