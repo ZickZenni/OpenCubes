@@ -31,7 +31,7 @@ It's currently **work in progress**, so there will be many bugs and probably lag
 
 ### Todo
 
-My current todo is available in the projects tab or [here](https://github.com/users/ZickZenni/projects/1 "OpenCubes: Project")
+My current todo list is available in the projects tab or [here](https://github.com/users/ZickZenni/projects/1 "OpenCubes: Project")
 
 ### IntelliJ
 
