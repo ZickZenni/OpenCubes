@@ -1,5 +1,8 @@
 [<img src="src/main/resources/assets/textures/gui/logo.png" width="517"/>]()
 
+| ⚠️ WARNING: this version of the game is coded in **Java**. It is currently being rewritten in **Net.Core**  |
+| --- |
+
 # OpenCubes
 
 A voxel rpg game, that tries to look a bit like Hytale
