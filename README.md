@@ -1,2 +1,2 @@
-| ⚠️ WARNING: this game is currently being rewritten in **C++**. A **Java** version can be found under *java* branch |
+| ⚠️ WARNING: this game is currently being rewritten in C++ and kept closed-sourced. The direction of the game has been changed |
 | --- |
