@@ -1,6 +1,6 @@
 [<img src="src/main/resources/assets/textures/gui/logo.png" width="517"/>]()
 
-| ⚠️ WARNING: this version of the game is coded in **Java**. It is currently being rewritten in **C++**  |
+| ⚠️ WARNING: this **development** of this game has been **stopped**  |
 | --- |
 
 # OpenCubes
